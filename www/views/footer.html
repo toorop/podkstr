@@ -1,5 +1,7 @@
 {{define "footer"}}
 <!-- footer -->
+<br>
+<br>
 <footer>
     <div class="container">
         <br>
@@ -12,4 +14,18 @@
     </div>
 </footer>
 <!-- /footer -->
+<!-- JavaScript
+    ================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/static/js/jquery.min.js "></script>
+<script src="/static/js/bootstrap.min.js "></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="/static/js/ie10-viewport-bug-workaround.js "></script>
+<!-- More scripts -->
+{{range .MoreScripts}}
+<script src="/static/js/{{.}}" type="text/javascript" charset="utf-8"></script>
+{{end}}
+</body>
+
+</html>
 {{end}}
