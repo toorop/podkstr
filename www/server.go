@@ -52,7 +52,7 @@ func main() {
 	log.Info("config loaded")
 
 	// Init DB
-	core.DB, err = gorm.Open("sqlite3", rootPath+"/etc/podkstr.db")
+	core.DB, err = gorm.Open(viper.GetString("db.dialect"), viper.GetString("db.args"))
 	if err != nil {
 		log.Fatal("database connexion failed - ", err)
 	}
@@ -97,7 +97,7 @@ func main() {
 	// Templates
 
 	t := &Template{
-		templates: template.Must(template.ParseGlob("views/*.html")),
+		templates: template.Must(template.ParseGlob(rootPath + "/views/*.html")),
 	}
 	e.Renderer = t
 
