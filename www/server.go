@@ -16,6 +16,9 @@ package main
 import (
 	"html/template"
 
+	"os"
+	"path/filepath"
+
 	"github.com/gorilla/sessions"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -31,23 +34,30 @@ import (
 // Main
 func main() {
 	var err error
+	var rootPath string
+
+	// get root
+	rootPath, err = filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		log.Fatal("unable to get root path -", err)
+	}
 
 	// Load config
-	viper.AddConfigPath("/home/toorop/Projects/Go/src/github.com/toorop/podkstr/www/dist")
+	viper.AddConfigPath(rootPath + "/etc")
 	err = viper.ReadInConfig()
 	if err != nil {
-		log.Fatal("unable to read config -", err)
+		log.Fatal("unable to read config - ", err)
 	}
 
 	log.Info("config loaded")
 
 	// Init DB
-	core.DB, err = gorm.Open("sqlite3", "/home/toorop/Projects/Go/src/github.com/toorop/podkstr/etc/podkstr.db")
+	core.DB, err = gorm.Open("sqlite3", rootPath+"/etc/podkstr.db")
 	if err != nil {
-		log.Fatal("database connexion failed -", err)
+		log.Fatal("database connexion failed - ", err)
 	}
 	if err = core.DbAutoMigrate(); err != nil {
-		log.Fatal("unable to automigrate DB", err)
+		log.Fatal("unable to automigrate DB - ", err)
 	}
 	log.Info("database instantiated")
 	// init echo web server
@@ -95,7 +105,7 @@ func main() {
 	// Routes
 
 	// Static
-	e.Static("/static", "/home/toorop/Projects/Go/src/github.com/toorop/podkstr/www/dist/static")
+	e.Static("/static", rootPath+"/static")
 
 	// Home
 	e.GET("/", controllers.Home)
