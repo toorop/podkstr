@@ -4,6 +4,6 @@ set -e;
 
 go build -o dist/server
 
-gulp minify
+gulp build
 
 dist/server

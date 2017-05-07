@@ -14,7 +14,7 @@ func SignIn(c echo.Context) error {
 		MoreScripts []string
 	}{
 		Title:       "Sign in or Sign up",
-		MoreScripts: []string{"vue.js", "axios.js", "components.js", "signin.js"},
+		MoreScripts: []string{"vue.js", "axios.min.js", "components.js", "signin.js"},
 	}
 	log.Info(c.Request().Method)
 	return c.Render(http.StatusOK, "signin", data)
