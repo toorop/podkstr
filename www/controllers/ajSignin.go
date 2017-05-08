@@ -24,7 +24,7 @@ import (
 // AjSignin login and sign up
 func AjSignin(ec echo.Context) error {
 	c := ec.(*appContext.AppContext)
-	// if not a POST request
+	// if not a POST request return
 	if c.Request().Method != "POST" {
 		return c.NoContent(http.StatusBadRequest)
 	}
@@ -142,7 +142,6 @@ func AjSignin(ec echo.Context) error {
 	}
 
 	// Set some session values.
-	logger.Log.Debug("user email ", user.Email)
 	session.Values["u@"] = user.Email
 
 	// Save it before we write to the response/return from the handler.

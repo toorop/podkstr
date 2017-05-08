@@ -83,10 +83,13 @@ func main() {
 	e.Use(func(h echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			cc := appContext.NewAppContext(c)
-			cc.SetCookieStore(sessions.NewCookieStore([]byte("bal")))
+			cc.SetCookieStore(sessions.NewCookieStore([]byte(viper.GetString("cookie.secret"))))
 			return h(cc)
 		}
 	})
+
+	// checkuser
+	e.Use(checkUser())
 
 	/////////////////
 	// Middlewares

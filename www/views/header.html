@@ -46,12 +46,19 @@
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="#">Home</a></li>
                     <li><a href="#about">About</a></li>
+
                     <li><a href="#contact">Contact</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
+                    {{ if .UserEmail not eq nil }}
+                    <li>
+                        <div class="btn-toolbar"><a href="/logout " class="btn btn-danger navbar-btn">Logout</a></div>
+                    </li>
+                    {{ else }}
                     <li>
                         <div class="btn-toolbar"><a href="/signin " class="btn btn-primary navbar-btn">Sign in</a></div>
                     </li>
+                    {{ end }}
                 </ul>
 
             </div>

@@ -1,5 +1,7 @@
 # Bose URL
 baseurl: https://podkstr.com
+cookie:
+  secret: "dlkjdlfjlskjssdddfjsdkfjsldsdjf12333354qssd4"
 
 # Database connection
 db:
