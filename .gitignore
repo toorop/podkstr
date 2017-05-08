@@ -1,3 +1,4 @@
 www/node_modules
 www/dist/server
-www/dist/podkstr.db
+www/dist/etc/podkstr.db
+www/dist/etc/config.yml

@@ -10,13 +10,13 @@
             <br>
             <div class="col-md-3 "></div>
             <div class="col-md-6 ">
-                <input type="email " class="form-control " id="exampleInputEmail1" placeholder="Email">
+                <input type="email" class="form-control" id="email" placeholder="Email" v-model="email">
                 <br>
-                <input type="password " class="form-control " id="exampleInputPassword1" placeholder="Password ">
+                <input type="password " class="form-control" id="passwd" placeholder="Password" v-model="passwd">
                 <br>
-                <p v-if="!showSignup "> <a href="# " v-on:click="switch2signup">Don't have an account yet ? Sign up</a></p>
+                <p v-if="!showSignup "> <a href="#" v-on:click="switch2signup">Don't have an account yet ? Sign up</a></p>
                 <div v-if="showSignup ">
-                    <input type="password " class="form-control " id="reexampleInputPassword1 " placeholder="Repeat Password ">
+                    <input type="password " class="form-control " id="passwd2 " placeholder="Repeat Password" v-model="passwd2">
                 </div>
                 <br>
                 <button type="submit " class="btn btn-primary " v-if="!showSignup" @click="submit">Sign In</button>

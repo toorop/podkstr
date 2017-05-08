@@ -1,3 +1,0 @@
-db:
-  dialect: "sqlite3"
-  args: "/home/toorop/Projects/Go/src/github.com/toorop/podkstr/www/dist/podkstr.db"

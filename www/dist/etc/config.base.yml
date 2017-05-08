@@ -1,0 +1,16 @@
+# Bose URL
+baseurl: https://podkstr.com
+
+# Database connection
+db:
+  dialect: "sqlite3"
+  args: "/home/toorop/Projects/Go/src/github.com/toorop/podkstr/www/dist/etc/podkstr.db"
+
+# SMTP
+smtp:
+  host: ""
+  port: 587
+  user: ""
+  passwd: ""
+  sender: "support@podkastr.com"
+  

@@ -14,5 +14,5 @@ func DbAutoMigrate() error {
 	if DB == nil {
 		return errors.New("DB is not initialized")
 	}
-	return DB.AutoMigrate().Error
+	return DB.AutoMigrate(&User{}).Error
 }

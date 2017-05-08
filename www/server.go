@@ -15,20 +15,22 @@ package main
 
 import (
 	"html/template"
-
+	"log"
 	"os"
 	"path/filepath"
+	"time"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/gorilla/sessions"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
 	"github.com/toorop/podkstr/core"
 	"github.com/toorop/podkstr/www/appContext"
 	"github.com/toorop/podkstr/www/controllers"
+	"github.com/toorop/podkstr/www/logger"
 )
 
 // Main
@@ -42,24 +44,35 @@ func main() {
 		log.Fatal("unable to get root path -", err)
 	}
 
+	viper.Set("rootPath", rootPath)
 	// Load config
 	viper.AddConfigPath(rootPath + "/etc")
 	err = viper.ReadInConfig()
 	if err != nil {
 		log.Fatal("unable to read config - ", err)
 	}
+	//log.Println("config loaded")
 
-	log.Info("config loaded")
+	// init app logger (! access log)
+	customFormatter := new(logrus.TextFormatter)
+	customFormatter.TimestampFormat = time.RFC3339Nano
+	customFormatter.FullTimestamp = true
+	logger.Log = logrus.New()
+	logger.Log.Formatter = customFormatter
+	logger.Log.Out = os.Stdout
+	logger.Log.Level = logrus.DebugLevel
+	logger.Log.Info("logrus instantiated")
 
 	// Init DB
 	core.DB, err = gorm.Open(viper.GetString("db.dialect"), viper.GetString("db.args"))
 	if err != nil {
-		log.Fatal("database connexion failed - ", err)
+		logger.Log.Fatal("database connexion failed - ", err)
 	}
 	if err = core.DbAutoMigrate(); err != nil {
-		log.Fatal("unable to automigrate DB - ", err)
+		logger.Log.Fatal("unable to automigrate DB - ", err)
 	}
-	log.Info("database instantiated")
+	logger.Log.Info("database instantiated")
+
 	// init echo web server
 	e := echo.New()
 
@@ -87,7 +100,7 @@ func main() {
 		return func(c echo.Context) error {
 			err := next(c)
 			if err != nil {
-				log.Error(err)
+				logger.Log.Error(err)
 			}
 			return err
 		}

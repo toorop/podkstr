@@ -23,7 +23,7 @@ gulp.task('build', function() {
                 unused: true,
                 if_return: true,
                 join_vars: true,
-                drop_console: true
+                drop_console: false
             }
         }))
         .pipe(gulp.dest('dist/static/js'));
