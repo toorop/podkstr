@@ -132,6 +132,11 @@ func main() {
 	// Signout
 	e.GET("/signout", controllers.Signout)
 
+	// private
+
+	// dashboard
+	e.GET("/dashboard", controllers.Todo)
+
 	// AJAX
 
 	// signin signup
