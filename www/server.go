@@ -79,6 +79,11 @@ func main() {
 	// Debug
 	e.Debug = true
 
+	e.Use(middleware.CSRFWithConfig(middleware.CSRFConfig{
+		TokenLookup: "header:X-XSRF-TOKEN",
+		CookieName:  "XSRF-TOKEN",
+	}))
+
 	// Custom context
 	e.Use(func(h echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -88,11 +93,10 @@ func main() {
 		}
 	})
 
-	// checkuser
-	e.Use(checkUser())
-
 	/////////////////
 	// Middlewares
+	// checkuser
+	e.Use(checkUser())
 
 	// Logger
 	e.Use(middleware.Logger())

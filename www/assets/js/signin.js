@@ -30,14 +30,12 @@ var app = new Vue({
                     return
                 }
             }
-
             axios.post('/ajsignin', {
                 email: that.email,
                 passwd: that.passwd,
                 passwd2: that.passwd2,
-                signup: that.showSignup
+                signup: that.showSignup,
             }).then(function(response) {
-                console.log(response)
                 if (!response.data.Ok) {
                     eventHub.$emit('displayError', response.data.Msg)
                 } else {
