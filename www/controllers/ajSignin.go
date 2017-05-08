@@ -24,11 +24,6 @@ import (
 // AjSignin login and sign up
 func AjSignin(ec echo.Context) error {
 	c := ec.(*appContext.AppContext)
-	// if not a POST request return
-	if c.Request().Method != "POST" {
-		return c.NoContent(http.StatusBadRequest)
-	}
-
 	type FormData struct {
 		Email   string `json:"email"`
 		Passwd  string `json:"passwd"`
@@ -147,6 +142,6 @@ func AjSignin(ec echo.Context) error {
 	// Save it before we write to the response/return from the handler.
 	session.Save(c.Request(), c.Response().Writer)
 	resp.Ok = true
-	resp.Msg = "/show"
+	resp.Msg = "/dashboard"
 	return c.JSON(http.StatusOK, resp)
 }

@@ -40,6 +40,8 @@ var app = new Vue({
                 console.log(response)
                 if (!response.data.Ok) {
                     eventHub.$emit('displayError', response.data.Msg)
+                } else {
+                    window.location.replace(response.data.Msg)
                 }
             }).catch(function(error) {
                 console.log(error)

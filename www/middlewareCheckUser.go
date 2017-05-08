@@ -25,14 +25,15 @@ func checkUser() echo.MiddlewareFunc {
 				return c.NoContent(http.StatusInternalServerError)
 			}
 			email := session.Values["u@"]
-			if email != nil {
+			c.Set("uEmail", "")
+			if email != nil && email != "" {
 				user, found, err := core.UserGetByMail(email.(string))
 				if err != nil {
 					logger.Log.Error(c.Request().RemoteAddr, " - middlewareCheckuser - core.UserGetByMail for ", email, " - ", err)
 					return c.NoContent(http.StatusInternalServerError)
 				}
 				if found {
-					c.Set("userEmail", user.Email)
+					c.Set("uEmail", user.Email)
 				} else {
 					logger.Log.Info(c.Request().RemoteAddr, " - middlewareCheckuser - core.UserGetByMail bad email in cookie: ", email)
 					return c.NoContent(http.StatusInternalServerError)

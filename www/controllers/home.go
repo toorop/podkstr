@@ -8,5 +8,10 @@ import (
 
 // Home / controller
 func Home(c echo.Context) error {
-	return c.Render(http.StatusOK, "home", "titi")
+	data := &tplData{
+		Title:       "Podkstr",
+		MoreScripts: []string{},
+		UserEmail:   c.Get("uEmail").(string),
+	}
+	return c.Render(http.StatusOK, "home", data)
 }

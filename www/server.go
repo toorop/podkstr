@@ -129,7 +129,8 @@ func main() {
 	// Signin / Sign up
 	e.GET("/signin", controllers.SignIn)
 
-	// Login / Signup
+	// Signout
+	e.GET("/signout", controllers.Signout)
 
 	// AJAX
 

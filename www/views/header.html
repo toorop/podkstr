@@ -50,13 +50,15 @@
                     <li><a href="#contact">Contact</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    {{ if .UserEmail not eq nil }}
+                    {{ if .UserEmail }}
+                    <li><span class="navbar-text">{{ .UserEmail }}</span></li>
                     <li>
-                        <div class="btn-toolbar"><a href="/logout " class="btn btn-danger navbar-btn">Logout</a></div>
+                        <div class="btn-toolbar"><a href="/signout" class="btn btn-danger navbar-btn">Logout</a></div>
                     </li>
+
                     {{ else }}
                     <li>
-                        <div class="btn-toolbar"><a href="/signin " class="btn btn-primary navbar-btn">Sign in</a></div>
+                        <div class="btn-toolbar"><a href="/signin" class="btn btn-primary navbar-btn">Sign in</a></div>
                     </li>
                     {{ end }}
                 </ul>
