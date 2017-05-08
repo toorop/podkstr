@@ -139,7 +139,7 @@ func main() {
 	// private
 
 	// dashboard
-	e.GET("/dashboard", controllers.Todo)
+	e.GET("/dashboard", controllers.Dashboard)
 
 	// AJAX
 

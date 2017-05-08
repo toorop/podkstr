@@ -4,9 +4,13 @@ body {
 
 .main {
     padding: 3rem 1.5rem;
-    text-align: center;
 }
 
 footer {
     background-color: #212322;
+}
+
+.show-box {
+    height: 400px;
+    cursor: pointer;
 }
