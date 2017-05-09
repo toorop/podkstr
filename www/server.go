@@ -146,6 +146,9 @@ func main() {
 	// signin signup
 	e.POST("/ajsignin", controllers.AjSignin)
 
+	// Import Show
+	e.POST("/ajimportshow", controllers.AjImportShow)
+
 	/////////////////
 	// 10.9.8.7...0!
 	e.Logger.Fatal(e.Start(":1323"))
