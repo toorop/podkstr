@@ -24,7 +24,7 @@ type Channel struct {
 	Language              string              `xml:"language,omitempty"`
 	Category              string              `xml:"category,omitempty"`
 	Copyright             string              `xml:"copyright,omitempty"`
-	Image                 *Image              `xml:"image,omitempty"`
+	Image                 *FeedImage          `xml:"image,omitempty"`
 	ItunesAuthor          string              `xml:"itunes_author,omitempty"`
 	ItunesOwner           string              `xml:"itunes_owner,omitempty"`
 	ItunesImage           *ItunesImage        `xml:"itunes_image,omitempty"`
@@ -38,7 +38,7 @@ type Channel struct {
 	GoogleplayDescription string              `xml:"googleplay_description,omitempty"`
 	GoogleplayCategory    *GoogleplayCategory `xml:"googleplay_category,omitempty"`
 	GoogleplayExplicit    string              `xml:"googleplay_explicit,omitempty"`
-	Item                  []Item              `xml:"item"`
+	Items                 []Item              `xml:"item"`
 }
 
 // AtomLink represents an atom Channel.AtomLink
@@ -46,8 +46,8 @@ type AtomLink struct {
 	Href string `xml:"href,attr,omitempty"`
 }
 
-// Image represents a Channel.Image
-type Image struct {
+// FeedImage represents a Channel.Image
+type FeedImage struct {
 	XMLName xml.Name `xml:"image"`
 	URL     string   `xml:"url,omitempty"`
 	Title   string   `xml:"title,omitempty"`
@@ -78,26 +78,26 @@ type GoogleplayCategory struct {
 
 // Item represents a Channel.Item
 type Item struct {
-	Title                 string     `xml:"title"`
-	Link                  string     `xml:"link"`
-	Description           string     `xml:"description,omitempty"`
-	GUID                  string     `xml:"guid,omitempty"`
-	GUIDisPermalink       string     `xml:"isPermalink,attr,omitempty"`
-	PubDate               string     `xml:"pubDate,omitempty"`
-	Enclosure             *Enclosure `xml:"enclosure,omitempty"`
-	ItunesAuthor          string     `xml:"itunes_author,omitempty"`
-	ItunesSubtitle        string     `xml:"itunes_subtitle,omitempty"`
-	ItunesSummary         string     `xml:"itunes_summary,omitempty"`
-	ItunesDuration        int        `xml:"itunes_duration,omitempty"`
-	ItunesKeywords        string     `xml:"itunes_keywords,omitempty"`
-	ItunesExplicit        string     `xml:"itunes_explicit,omitempty"`
-	GoogleplayAuthor      string     `xml:"googleplay_author,omitempty"`
-	GoogleplayDescription string     `xml:"googleplay_description,omitempty"`
-	GoogleplayExplicit    string     `xml:"googleplay_explicit,omitempty"`
+	Title                 string         `xml:"title"`
+	Link                  string         `xml:"link"`
+	Description           string         `xml:"description,omitempty"`
+	GUID                  string         `xml:"guid,omitempty"`
+	GUIDisPermalink       string         `xml:"isPermalink,attr,omitempty"`
+	PubDate               string         `xml:"pubDate,omitempty"`
+	Enclosure             *FeedEnclosure `xml:"enclosure,omitempty"`
+	ItunesAuthor          string         `xml:"itunes_author,omitempty"`
+	ItunesSubtitle        string         `xml:"itunes_subtitle,omitempty"`
+	ItunesSummary         string         `xml:"itunes_summary,omitempty"`
+	ItunesDuration        int            `xml:"itunes_duration,omitempty"`
+	ItunesKeywords        string         `xml:"itunes_keywords,omitempty"`
+	ItunesExplicit        string         `xml:"itunes_explicit,omitempty"`
+	GoogleplayAuthor      string         `xml:"googleplay_author,omitempty"`
+	GoogleplayDescription string         `xml:"googleplay_description,omitempty"`
+	GoogleplayExplicit    string         `xml:"googleplay_explicit,omitempty"`
 }
 
-// Enclosure represents Channel.Item.Enclosure
-type Enclosure struct {
+// FeedEnclosure represents Channel.Item.Enclosure
+type FeedEnclosure struct {
 	URL    string `xml:"url,attr,omitempty"`
 	Length string `xml:"length,attr,omitempty"`
 	Type   string `xml:"type,attr,omitempty"`

@@ -5,8 +5,6 @@ import (
 
 	"strings"
 
-	"fmt"
-
 	"github.com/labstack/echo"
 	"github.com/toorop/podkstr/core"
 	"github.com/toorop/podkstr/www/appContext"
@@ -49,9 +47,16 @@ func AjImportShow(ec echo.Context) error {
 		return c.JSON(http.StatusOK, resp)
 	}
 
-	for _, episode := range feed.Channel.Item {
+	// Create show
+
+	// TODO check if show exists for other user
+	var show core.Show
+
+	/*for _, episode := range feed.Channel.Items {
 		fmt.Println(episode.Title, episode.Link)
-	}
+	}*/
+
+	//show := new(core.Show)
 
 	resp.Ok = true
 	return c.JSON(http.StatusOK, resp)
