@@ -33,10 +33,11 @@ func checkUser() echo.MiddlewareFunc {
 					return c.NoContent(http.StatusInternalServerError)
 				}
 				if found {
-					c.Set("uEmail", user.Email)
+					c.Set("user", user)
 				} else {
-					logger.Log.Info(c.Request().RemoteAddr, " - middlewareCheckuser - core.UserGetByMail bad email in cookie: ", email)
-					return c.NoContent(http.StatusInternalServerError)
+					c.Set("uEmail", "")
+					//logger.Log.Info(c.Request().RemoteAddr, " - middlewareCheckuser - core.UserGetByMail bad email in cookie: ", email)
+					//return c.NoContent(http.StatusInternalServerError)
 				}
 			}
 			return next(c)

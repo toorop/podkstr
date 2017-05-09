@@ -21,6 +21,7 @@ type User struct {
 	Email          string `gorm:"unique_index"`
 	Passwd         string
 	ValidationUUID string
+	Shows          []Show
 }
 
 // UserNew create and return a new user

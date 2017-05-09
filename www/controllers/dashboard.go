@@ -4,18 +4,20 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
+	"github.com/toorop/podkstr/core"
 )
 
 // Dashboard controller
 func Dashboard(c echo.Context) error {
 	// chek auth
-	if c.Get("uEmail").(string) == "" {
+	u := c.Get("user")
+	if u == nil {
 		return c.Redirect(http.StatusTemporaryRedirect, "/signin")
 	}
 	data := &tplData{
 		Title:       "Podkstr dashboard",
 		MoreScripts: []string{"vue.js", "axios.min.js", "components.js", "dashboard.js"},
-		UserEmail:   c.Get("uEmail").(string),
+		UserEmail:   u.(core.User).Email,
 	}
 	return c.Render(http.StatusOK, "dashboard", data)
 }

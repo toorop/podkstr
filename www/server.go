@@ -71,6 +71,7 @@ func main() {
 	if err = core.DbAutoMigrate(); err != nil {
 		logger.Log.Fatal("unable to automigrate DB - ", err)
 	}
+	core.DB.Debug()
 	logger.Log.Info("database instantiated")
 
 	// init echo web server

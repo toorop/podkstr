@@ -1,11 +1,14 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
+	"time"
 
 	"strings"
 
 	"github.com/labstack/echo"
+	"github.com/satori/go.uuid"
 	"github.com/toorop/podkstr/core"
 	"github.com/toorop/podkstr/www/appContext"
 	"github.com/toorop/podkstr/www/logger"
@@ -14,14 +17,16 @@ import (
 // AjImportShow import
 func AjImportShow(ec echo.Context) error {
 	type response struct {
-		Ok  bool
-		Msg string
+		Ok   bool
+		Msg  string
+		Show core.Show
 	}
 	var resp = response{}
 	var err error
 
 	c := ec.(*appContext.AppContext)
-	if c.Get("uEmail").(string) == "" {
+	u := c.Get("user")
+	if u == nil {
 		resp.Msg = "You are not logged please signin"
 		return c.JSON(http.StatusForbidden, resp)
 	}
@@ -48,15 +53,104 @@ func AjImportShow(ec echo.Context) error {
 	}
 
 	// Create show
+	image := core.ShowImage{
+		URL:    feed.Channel.Image.URL,
+		Title:  feed.Channel.Image.Title,
+		Link:   feed.Channel.Image.Link,
+		Width:  feed.Channel.Image.Width,
+		Height: feed.Channel.Image.Height,
+	}
 
-	// TODO check if show exists for other user
-	var show core.Show
+	show := core.Show{
+		UUID:        uuid.NewV4().String(),
+		UserID:      u.(core.User).ID,
+		Title:       feed.Channel.Title,
+		LinkImport:  feed.Channel.Link,
+		Category:    feed.Channel.Category,
+		Description: feed.Channel.Description,
+		Subtitle:    feed.Channel.ItunesSubtitle,
+		Language:    feed.Channel.Language,
+		Copyright:   feed.Channel.Copyright,
+		Author:      feed.Channel.ItunesAuthor,
+		Image:       image,
 
-	/*for _, episode := range feed.Channel.Items {
-		fmt.Println(episode.Title, episode.Link)
-	}*/
+		ItunesExplicit: feed.Channel.ItunesExplicit,
+		ItunesImage:    feed.Channel.ItunesImage.Herf,
 
-	//show := new(core.Show)
+		Episodes: []core.Episode{},
+	}
+
+	if err = show.Create(); err != nil {
+		return err
+	}
+
+	resp.Show = show
+
+	go func() {
+		for _, episode := range feed.Channel.Items {
+			/*GUIDisPermalink, err := strconv.ParseBool(episode.GUIDisPermalink)
+			if err != nil {
+				return err
+			}*/
+			// pubdate
+			pubDate, err := time.Parse("Mon, 2 Jan 2006 15:04:05 -0700", episode.PubDate)
+			if err != nil {
+				return
+			}
+
+			// Enclosure
+			enclosure := core.Enclosure{
+				URLimport: episode.Enclosure.URL,
+				Length:    episode.Enclosure.Length,
+				Type:      episode.Enclosure.Type,
+			}
+
+			// keywords
+			keywords := []core.Keyword{}
+			ks := strings.Split(episode.ItunesKeywords, ",")
+			for _, word := range ks {
+				word = strings.ToLower(strings.TrimSpace(word))
+				if word != "" {
+					// exists ?
+					k, found, err := core.GetKeyword(word)
+					if err != nil {
+						return
+					}
+					if found {
+
+						keywords = append(keywords, k)
+					} else {
+						keywords = append(keywords, core.Keyword{
+							Word: word,
+						})
+					}
+				}
+			}
+
+			ep := core.Episode{
+				UUID:            uuid.NewV4().String(),
+				Title:           episode.Title,
+				LinkImport:      episode.Link,
+				Description:     episode.Description,
+				Subtitle:        episode.ItunesSubtitle,
+				GUID:            episode.GUID,
+				GUIDisPermalink: false,
+				PubDate:         pubDate,
+				Duration:        episode.ItunesDuration,
+				Enclosure:       enclosure,
+				Keywords:        keywords,
+
+				GoogleplayExplicit: feed.Channel.GoogleplayExplicit,
+				ItunesExplicit:     feed.Channel.ItunesExplicit,
+			}
+			show.Episodes = append(show.Episodes, ep)
+			if err = show.Save(); err != nil {
+				return
+			}
+		}
+	}()
+
+	fmt.Println("Au final on a: ", err)
 
 	resp.Ok = true
 	return c.JSON(http.StatusOK, resp)

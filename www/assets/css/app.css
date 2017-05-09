@@ -13,3 +13,7 @@ footer {
 .show-box {
     height: 370px;
 }
+
+.show-box .caption {
+    padding-top: 0px;
+}

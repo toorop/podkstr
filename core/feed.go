@@ -82,13 +82,13 @@ type Item struct {
 	Link                  string         `xml:"link"`
 	Description           string         `xml:"description,omitempty"`
 	GUID                  string         `xml:"guid,omitempty"`
-	GUIDisPermalink       string         `xml:"isPermalink,attr,omitempty"`
+	GUIDisPermalink       string         `xml:"isPermaLink,attr,omitempty"`
 	PubDate               string         `xml:"pubDate,omitempty"`
 	Enclosure             *FeedEnclosure `xml:"enclosure,omitempty"`
 	ItunesAuthor          string         `xml:"itunes_author,omitempty"`
 	ItunesSubtitle        string         `xml:"itunes_subtitle,omitempty"`
 	ItunesSummary         string         `xml:"itunes_summary,omitempty"`
-	ItunesDuration        int            `xml:"itunes_duration,omitempty"`
+	ItunesDuration        string         `xml:"itunes_duration,omitempty"`
 	ItunesKeywords        string         `xml:"itunes_keywords,omitempty"`
 	ItunesExplicit        string         `xml:"itunes_explicit,omitempty"`
 	GoogleplayAuthor      string         `xml:"googleplay_author,omitempty"`
