@@ -23,7 +23,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/gorilla/sessions"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/spf13/viper"
@@ -149,6 +149,9 @@ func main() {
 
 	// Import Show
 	e.POST("/ajimportshow", controllers.AjImportShow)
+
+	// Get User Shows
+	e.GET("/aj/user/shows", controllers.AjGetUserShows)
 
 	/////////////////
 	// 10.9.8.7...0!

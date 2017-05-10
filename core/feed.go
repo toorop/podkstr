@@ -19,24 +19,24 @@ type Channel struct {
 	XMLName               xml.Name            `xml:"channel"`
 	Title                 string              `xml:"title"`
 	Link                  string              `xml:"link"`
-	AtomLink              *AtomLink           `xml:"atom_link,omitempty"`
+	AtomLink              *AtomLink           `xml:"atom_link"`
 	Description           string              `xml:"description,omitempty"`
 	Language              string              `xml:"language,omitempty"`
 	Category              string              `xml:"category,omitempty"`
 	Copyright             string              `xml:"copyright,omitempty"`
-	Image                 *FeedImage          `xml:"image,omitempty"`
+	Image                 *FeedImage          `xml:"image"`
 	ItunesAuthor          string              `xml:"itunes_author,omitempty"`
 	ItunesOwner           string              `xml:"itunes_owner,omitempty"`
-	ItunesImage           *ItunesImage        `xml:"itunes_image,omitempty"`
+	ItunesImage           *ItunesImage        `xml:"itunes_image"`
 	ItunesSubtitle        string              `xml:"itunes_subtitle,omitempty"`
 	ItunesSummary         string              `xml:"itunes_summary,omitempty"`
-	ItunesCategory        *ItunesCategory     `xml:"itunes_category,omitempty"`
+	ItunesCategory        *ItunesCategory     `xml:"itunes_category"`
 	ItunesExplicit        string              `xml:"itunes_explicit,omitempty"`
 	GoogleplayAuthor      string              `xml:"googleplay_author,omitempty"`
-	GoogleplayImage       *GoogleplayImage    `xml:"googleplay_image,omitempty"`
+	GoogleplayImage       *GoogleplayImage    `xml:"googleplay_image"`
 	GoogleplayEmail       string              `xml:"googleplay_mail,omitempty"`
 	GoogleplayDescription string              `xml:"googleplay_description,omitempty"`
-	GoogleplayCategory    *GoogleplayCategory `xml:"googleplay_category,omitempty"`
+	GoogleplayCategory    *GoogleplayCategory `xml:"googleplay_category"`
 	GoogleplayExplicit    string              `xml:"googleplay_explicit,omitempty"`
 	Items                 []Item              `xml:"item"`
 }
@@ -58,22 +58,22 @@ type FeedImage struct {
 
 // ItunesImage represents à Channel.ItunesImage
 type ItunesImage struct {
-	Herf string `xml:"href,attr,omitempty"`
+	Href string `xml:"href,attr,omitempty"`
 }
 
 // ItunesCategory represents à Channel.ItunesCategory
 type ItunesCategory struct {
-	Herf string `xml:"text,attr,omitempty"`
+	Href string `xml:"text,attr,omitempty"`
 }
 
 // GoogleplayImage represents à Channel.GoogleplayImage
 type GoogleplayImage struct {
-	Herf string `xml:"href,attr,omitempty"`
+	Href string `xml:"href,attr,omitempty"`
 }
 
 // GoogleplayCategory represents à Channel.GoogleplayImage
 type GoogleplayCategory struct {
-	Herf string `xml:"text,attr,omitempty"`
+	Href string `xml:"text,attr,omitempty"`
 }
 
 // Item represents a Channel.Item

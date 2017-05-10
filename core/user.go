@@ -76,3 +76,9 @@ func UserGetByEmailPasswd(email, passwd string) (u User, found bool, err error) 
 	found = true
 	return
 }
+
+// GetShows returns User shows
+func (u User) GetShows() (shows []Show, err error) {
+	err = DB.Model(&u).Related(&shows).Error
+	return
+}

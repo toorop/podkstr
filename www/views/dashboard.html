@@ -7,14 +7,6 @@
         <div class="row">
             <div class="col-sm-6 col-md-3">
                 <div class="thumbnail show-box">
-                    <img src="http://d3wo5wojvuv7l.cloudfront.net/t_rss_itunes_square_1400/images.spreaker.com/original/346bf6384f76d98f5472697327b97223.jpg" alt="...">
-                    <div class="caption text-center">
-                        <h3> L'instant T</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <div class="thumbnail show-box">
                     <div class="text-center"><span class="glyphicon glyphicon glyphicon-plus-sign" style="font-size:150px;" aria-hidden="true"></span></div>
                     <div class="caption text-center">
                         <h3> Add show</h3>
@@ -28,6 +20,8 @@
                     </div>
                 </div>
             </div>
+            <!--  shows -->
+            <show-thumbail v-for="show in shows" :key="show.UUID" :show=show :id="show.UUID"></show-thumbail>
         </div>
     </div>
 </div>

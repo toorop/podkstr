@@ -15,7 +15,6 @@ Vue.component('alert-box', {
     template: '<div id="alert" v-show="showAlert" class="alert" v-bind:class="{ \'alert-danger\': alertDanger, \'alert-success\': alertSuccess }" role="alert"> [[ alertMessage ]] </div>',
 
     created: function() {
-        console.log('created');
         eventHub.$on('hideAlertBox', this.hide)
         eventHub.$on('displayError', this.displayError)
         eventHub.$on('displaySuccess', this.displaySuccess)

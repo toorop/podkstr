@@ -53,14 +53,16 @@ func AjImportShow(ec echo.Context) error {
 	}
 
 	// Create show
-	image := core.ShowImage{
-		URL:    feed.Channel.Image.URL,
-		Title:  feed.Channel.Image.Title,
-		Link:   feed.Channel.Image.Link,
-		Width:  feed.Channel.Image.Width,
-		Height: feed.Channel.Image.Height,
+	image := core.ShowImage{}
+	if feed.Channel.Image != nil {
+		image = core.ShowImage{
+			URL:    feed.Channel.Image.URL,
+			Title:  feed.Channel.Image.Title,
+			Link:   feed.Channel.Image.Link,
+			Width:  feed.Channel.Image.Width,
+			Height: feed.Channel.Image.Height,
+		}
 	}
-
 	show := core.Show{
 		UUID:        uuid.NewV4().String(),
 		UserID:      u.(core.User).ID,
@@ -75,7 +77,7 @@ func AjImportShow(ec echo.Context) error {
 		Image:       image,
 
 		ItunesExplicit: feed.Channel.ItunesExplicit,
-		ItunesImage:    feed.Channel.ItunesImage.Herf,
+		ItunesImage:    feed.Channel.ItunesImage.Href,
 
 		Episodes: []core.Episode{},
 	}
@@ -126,7 +128,6 @@ func AjImportShow(ec echo.Context) error {
 					}
 				}
 			}
-
 			ep := core.Episode{
 				UUID:            uuid.NewV4().String(),
 				Title:           episode.Title,
