@@ -10,8 +10,7 @@ var compShowThumbail = {
         }
     },*/
     props: ['show'],
-
-    template: '<div class="col-sm-6 col-md-3">' +
+    template: '<div class="col-sm-6 col-md-3" @click="workinprogress">' +
         '<div class="thumbnail show-box">' +
         '<img :src="show.ItunesImage" alt="...">' +
         '<div class="caption">' +
@@ -22,6 +21,12 @@ var compShowThumbail = {
         '</div>' +
         '</div>' +
         '</div>',
+    methods: {
+        workinprogress: function() {
+            console.log('CLICKED')
+            eventHub.$emit('displaySuccess', 'Work in progress... ;)')
+        }
+    }
 }
 
 var app = new Vue({
@@ -52,7 +57,6 @@ var app = new Vue({
             })
     },
     methods: {
-
         importShow: function() {
             if (this.feedURL == "") {
                 console.log("emit")

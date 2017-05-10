@@ -12,6 +12,7 @@ footer {
 
 .show-box {
     height: 370px;
+    cursor: pointer;
 }
 
 .show-box .caption {
