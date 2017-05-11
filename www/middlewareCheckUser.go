@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo"
@@ -26,7 +27,7 @@ func checkUser() echo.MiddlewareFunc {
 			}
 			email := session.Values["u@"]
 			c.Set("uEmail", "")
-			if email != nil && email != "" {
+			if email != nil && email != "" && !strings.HasPrefix(c.Request().RequestURI, "/static/") {
 				user, found, err := core.UserGetByMail(email.(string))
 				if err != nil {
 					logger.Log.Error(c.Request().RemoteAddr, " - middlewareCheckuser - core.UserGetByMail for ", email, " - ", err)

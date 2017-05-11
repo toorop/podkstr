@@ -1,7 +1,6 @@
 package core
 
 import (
-	"log"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -35,11 +34,9 @@ func (e *Episode) Create() error {
 
 // Delete delete an episode
 func (e Episode) Delete() (err error) {
-	log.Println("deleting episode ", e.ID)
 
 	// Enclosure
 	// Get episode enclosure
-
 	var enclosure Enclosure
 	if err = DB.Model(&e).Related(&enclosure).Error; err != nil {
 		return err
