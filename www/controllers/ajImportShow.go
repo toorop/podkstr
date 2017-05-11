@@ -46,6 +46,20 @@ func AjImportShow(ec echo.Context) error {
 		return c.JSON(http.StatusOK, resp)
 	}
 
+	// Check if user elready have this feed
+	_, found, err := u.(core.User).GetShowByFeed(fd.FeedURL)
+	if err != nil {
+		resp.Msg = err.Error()
+		return c.JSON(http.StatusOK, resp)
+	}
+	if found {
+		resp.Ok = false
+		resp.Msg = "You already have this show on your show list."
+		return c.JSON(http.StatusOK, resp)
+	}
+
+	//return c.JSON(http.StatusOK, resp)
+
 	feed, err := core.NewFeed(fd.FeedURL)
 	if err != nil {
 		resp.Msg = err.Error()
@@ -68,6 +82,8 @@ func AjImportShow(ec echo.Context) error {
 		UserID:      u.(core.User).ID,
 		Title:       feed.Channel.Title,
 		LinkImport:  feed.Channel.Link,
+		Link:        feed.Channel.Link,
+		Feed:        fd.FeedURL,
 		Category:    feed.Channel.Category,
 		Description: feed.Channel.Description,
 		Subtitle:    feed.Channel.ItunesSubtitle,
