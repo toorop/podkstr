@@ -3,6 +3,7 @@ package core
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/asaskevich/govalidator"
@@ -80,5 +81,22 @@ func UserGetByEmailPasswd(email, passwd string) (u User, found bool, err error) 
 // GetShows returns User shows
 func (u User) GetShows() (shows []Show, err error) {
 	err = DB.Model(&u).Related(&shows).Error
+	return
+}
+
+// GetShowByFeed returns a show by is feed URL
+func (u User) GetShowByFeed(url string) (show Show, found bool, err error) {
+	//log.Println(url)
+	url = strings.ToLower(strings.TrimSpace(url))
+	err = DB.Model(&u).Related(&Show{}).Where("feed = ?", url).First(&show).Error
+	log.Println(err, found, show)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = nil
+		}
+		return
+	}
+	found = true
+	//log.Println(err, found, show)
 	return
 }
