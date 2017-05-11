@@ -4,20 +4,28 @@ Vue.filter('maxlenght', function(value) {
 
 var compShowThumbail = {
     delimiters: ["[[", "]]"],
-    /*data: function() {
-        return {
-            show: {}
-        }
-    },*/
     props: ['show'],
     template: '<div class="col-sm-6 col-md-3" @click="workinprogress">' +
         '<div class="thumbnail show-box">' +
         '<img :src="show.ItunesImage" alt="...">' +
         '<div class="caption">' +
-        '<div class="text-center">' +
-        '<h3>[[ show.Title | maxlenght ]]</h3>' +
-        '</div>' +
-        '<p>Status: OK<br> Last sync: 05/05/2017 19:23:55</p>' +
+        //'<div class="text-center">' +
+        //'<h3>[[ show.Title | maxlenght ]]</h3>' +
+        //'</div>' +
+        //'<div class="show-box-icons">' +
+        '<br>' +
+        '<ul class="list-inline show-box-icons">' +
+        '<li><span class="glyphicon glyphicon glyphicon-alert col-md-4" style="color: #a94442;" title = "Backup is not implemented yet"></span></li>' +
+        '<li><span class="glyphicon glyphicon glyphicon-cloud-download col-md-4" title="Download Show"></span></li>' +
+        '<li><span class="glyphicon glyphicon glyphicon-trash col-md-4" title="Delete Show"></span></li>' +
+        '</ul>' +
+
+
+
+        /*'<span class="glyphicon glyphicon glyphicon-alert col-md-4" style="color: #a94442;" title = "Backup is not implemented yet"></span>' +
+        '<span class="glyphicon glyphicon glyphicon-cloud-download col-md-4" title="Download Show"></span>' +
+        '<span class="glyphicon glyphicon glyphicon-trash col-md-4" title="Delete Show"></span>' +
+        '</div>' +*/
         '</div>' +
         '</div>' +
         '</div>',
@@ -46,7 +54,6 @@ var app = new Vue({
             // populate show
         axios.get('/aj/user/shows')
             .then(function(response) {
-                console.log(response)
                 if (!response.data.Ok) {
                     eventHub.$emit('displayError', response.data.Msg)
                 } else {

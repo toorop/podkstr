@@ -11,6 +11,7 @@ type Show struct {
 	Title          string
 	Link           string
 	LinkImport     string
+	Feed           string
 	Category       string
 	Description    string
 	Subtitle       string
