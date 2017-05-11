@@ -1,6 +1,7 @@
 package core
 
 import (
+	"log"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -9,8 +10,8 @@ import (
 // Episode represents an Show.Episodes
 type Episode struct {
 	gorm.Model
-	ShowID uint
-	UUID   string
+	ShowID uint   `gorm:"index"`
+	UUID   string `gorm:"type:char(36);unique_index"`
 
 	Title              string
 	Link               string
@@ -27,13 +28,62 @@ type Episode struct {
 	GoogleplayExplicit string
 }
 
+// Create creat a nw episode in DB
+func (e *Episode) Create() error {
+	return DB.Create(e).Error
+}
+
+// Delete delete an episode
+func (e Episode) Delete() (err error) {
+	log.Println("deleting episode ", e.ID)
+
+	// Enclosure
+	// Get episode enclosure
+
+	var enclosure Enclosure
+	if err = DB.Model(&e).Related(&enclosure).Error; err != nil {
+		return err
+	}
+
+	if err = enclosure.Delete(); err != nil {
+		return err
+	}
+
+	// delete episode keywords
+	/*var keywords []Keyword
+	if err = DB.Unscoped().Model(e).Related(&keywords, "Keywords").Delete(&keywords).Error; err != nil {
+		return err
+	}*/
+
+	// Pour le moment on ne supprime que les associations
+	if err = DB.Model(e).Association("Keywords").Clear().Error; err != nil {
+		return err
+	}
+
+	// delete episode from DB
+	return DB.Unscoped().Delete(e).Error
+}
+
+// GetKeywords returns episode keywords
+func (e *Episode) GetKeywords() (keywords []Keyword, err error) {
+	err = DB.Model(e).Related(&keywords, "Keywords").Error
+	return
+}
+
 // Enclosure is a Episode.Enclosures
 type Enclosure struct {
-	EpisodeID uint
+	gorm.Model
+	EpisodeID uint `gorm:"index"`
 	URLimport string
 	URL       string
 	Length    string
 	Type      string
+}
+
+// Delete delete enclosure e
+func (e *Enclosure) Delete() error {
+	// TODO delete file
+	return DB.Unscoped().Delete(e).Error
 }
 
 // Keyword is a Episode.Keywords
@@ -54,9 +104,4 @@ func GetKeyword(word string) (k Keyword, found bool, err error) {
 	}
 	found = true
 	return
-}
-
-// Create creat a nw episode in DB
-func (e *Episode) Create() error {
-	return DB.Create(e).Error
 }

@@ -16,12 +16,12 @@ import (
 // User represents a Podkstr user
 type User struct {
 	gorm.Model
-	UUID           string `gorm:"unique_index"`
+	UUID           string `gorm:"type:char(36);unique_index"`
 	FirstName      string
 	LastName       string
 	Email          string `gorm:"unique_index"`
 	Passwd         string
-	ValidationUUID string
+	ValidationUUID string `gorm:"type:char(36);unique_index"`
 	Shows          []Show
 }
 
@@ -86,7 +86,6 @@ func (u User) GetShows() (shows []Show, err error) {
 
 // GetShowByFeed returns a show by is feed URL
 func (u User) GetShowByFeed(url string) (show Show, found bool, err error) {
-	//log.Println(url)
 	url = strings.ToLower(strings.TrimSpace(url))
 	err = DB.Model(&u).Related(&Show{}).Where("feed = ?", url).First(&show).Error
 	log.Println(err, found, show)
@@ -97,6 +96,19 @@ func (u User) GetShowByFeed(url string) (show Show, found bool, err error) {
 		return
 	}
 	found = true
-	//log.Println(err, found, show)
+	return
+}
+
+// GetShowByUUID return an user show by his uuid
+func (u User) GetShowByUUID(uuid string) (show Show, found bool, err error) {
+	err = DB.Model(&u).Related(&Show{}).Where("uuid = ?", uuid).First(&show).Error
+	log.Println(err, found, show)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = nil
+		}
+		return
+	}
+	found = true
 	return
 }

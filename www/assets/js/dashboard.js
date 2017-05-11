@@ -5,9 +5,9 @@ Vue.filter('maxlenght', function(value) {
 var compShowThumbail = {
     delimiters: ["[[", "]]"],
     props: ['show'],
-    template: '<div class="col-sm-6 col-md-3" @click="workinprogress">' +
+    template: '<div class="col-sm-6 col-md-3">' +
         '<div class="thumbnail show-box">' +
-        '<img :src="show.ItunesImage" alt="...">' +
+        '<img :src="show.ItunesImage" :alt="show.Title" @click="workinprogress">' +
         '<div class="caption">' +
         //'<div class="text-center">' +
         //'<h3>[[ show.Title | maxlenght ]]</h3>' +
@@ -15,24 +15,33 @@ var compShowThumbail = {
         //'<div class="show-box-icons">' +
         '<br>' +
         '<ul class="list-inline show-box-icons">' +
-        '<li><span class="glyphicon glyphicon glyphicon-alert col-md-4" style="color: #a94442;" title = "Backup is not implemented yet"></span></li>' +
-        '<li><span class="glyphicon glyphicon glyphicon-cloud-download col-md-4" title="Download Show"></span></li>' +
-        '<li><span class="glyphicon glyphicon glyphicon-trash col-md-4" title="Delete Show"></span></li>' +
+        '<li><span  class="glyphicon glyphicon glyphicon-alert col-md-4 show-box-ico" style="color: #a94442;"  title="Status: not synchronized" @click="workinprogress"></span></li>' +
+        '<li><span class="glyphicon glyphicon glyphicon-cloud-download col-md-4 show-box-ico" title="Download Show" @click="workinprogress"></span></li>' +
+        '<li><span class="glyphicon glyphicon glyphicon-trash col-md-4 show-box-ico" title="Delete Show"  @click="deleteshow()"></span></li>' +
         '</ul>' +
 
-
-
-        /*'<span class="glyphicon glyphicon glyphicon-alert col-md-4" style="color: #a94442;" title = "Backup is not implemented yet"></span>' +
-        '<span class="glyphicon glyphicon glyphicon-cloud-download col-md-4" title="Download Show"></span>' +
-        '<span class="glyphicon glyphicon glyphicon-trash col-md-4" title="Delete Show"></span>' +
-        '</div>' +*/
         '</div>' +
         '</div>' +
         '</div>',
     methods: {
         workinprogress: function() {
-            console.log('CLICKED')
             eventHub.$emit('displaySuccess', 'Work in progress... ;)')
+        },
+        deleteshow: function() {
+            var that = this
+            console.log("Delete" + this.show.UUID)
+            axios.delete("/aj/show/delete/" + this.show.UUID)
+                .then(function(response) {
+                    if (!response.data.Ok) {
+                        eventHub.$emit('displayError', response.data.Msg)
+                    } else {
+                        eventHub.$emit('removeShow', that.show.UUID)
+                    }
+                })
+                .catch(function(error) {
+                    console.log("ERROR: " + error)
+                    eventHub.$emit('displayError', "Ooops something wrong happened :(")
+                });
         }
     }
 }
@@ -51,7 +60,9 @@ var app = new Vue({
     },
     created: function() {
         var that = this
-            // populate show
+        eventHub.$on('removeShow', this.removeShow)
+
+        // populate show
         axios.get('/aj/user/shows')
             .then(function(response) {
                 if (!response.data.Ok) {
@@ -76,14 +87,20 @@ var app = new Vue({
                 if (!response.data.Ok) {
                     eventHub.$emit('displayError', response.data.Msg)
                 } else {
-                    console.log(response.data.Show)
-                    console.log(that.shows)
                     that.shows.unshift(response.data.Show)
-                        //eventHub.$emit('displaySuccess', "OK !")
                 }
             }).catch(function(error) {
                 eventHub.$emit('displayError', "Ooops something wrong happened :(")
             })
+        },
+        removeShow: function(uuid) {
+            var newShows = []
+            this.shows.forEach(function(show) {
+                if (show.UUID != uuid) {
+                    newShows.push(show)
+                }
+            }, this);
+            this.shows = newShows
         }
     }
 })

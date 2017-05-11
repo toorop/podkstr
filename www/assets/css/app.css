@@ -10,7 +10,7 @@ footer {
     background-color: #212322;
 }
 
-.show-box {
+.show-box img {
     cursor: pointer;
 }
 
@@ -25,4 +25,8 @@ footer {
 .show-box-icons {
     font-size: 30px;
     text-align: center;
+}
+
+.show-box-ico {
+    cursor: pointer;
 }

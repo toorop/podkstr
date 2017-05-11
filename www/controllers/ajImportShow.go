@@ -19,7 +19,7 @@ func AjImportShow(ec echo.Context) error {
 	type response struct {
 		Ok   bool
 		Msg  string
-		Show core.Show
+		Show *core.Show
 	}
 	var resp = response{}
 	var err error
@@ -83,6 +83,7 @@ func AjImportShow(ec echo.Context) error {
 		Title:       feed.Channel.Title,
 		LinkImport:  feed.Channel.Link,
 		Link:        feed.Channel.Link,
+		Locked:      false,
 		Feed:        fd.FeedURL,
 		Category:    feed.Channel.Category,
 		Description: feed.Channel.Description,
@@ -102,7 +103,7 @@ func AjImportShow(ec echo.Context) error {
 		return err
 	}
 
-	resp.Show = show
+	resp.Show = &show
 
 	go func() {
 		for _, episode := range feed.Channel.Items {
@@ -160,10 +161,11 @@ func AjImportShow(ec echo.Context) error {
 				GoogleplayExplicit: feed.Channel.GoogleplayExplicit,
 				ItunesExplicit:     feed.Channel.ItunesExplicit,
 			}
-			show.Episodes = append(show.Episodes, ep)
-			if err = show.Save(); err != nil {
+			if err := show.AddEpisode(ep); err != nil {
+				logger.Log.Error("AjImportShow - show.AddEpisode(ep) ", err)
 				return
 			}
+
 		}
 	}()
 

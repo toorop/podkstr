@@ -72,6 +72,7 @@ func main() {
 		logger.Log.Fatal("unable to automigrate DB - ", err)
 	}
 	core.DB.LogMode(true)
+	defer core.DB.Close()
 	logger.Log.Info("database instantiated")
 
 	// init echo web server
@@ -149,6 +150,9 @@ func main() {
 
 	// Import Show
 	e.POST("/ajimportshow", controllers.AjImportShow)
+
+	// Delete show
+	e.DELETE("/aj/show/delete/:uuid", controllers.AjDeleteShow)
 
 	// Get User Shows
 	e.GET("/aj/user/shows", controllers.AjGetUserShows)
