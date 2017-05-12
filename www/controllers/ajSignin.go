@@ -17,8 +17,8 @@ import (
 	"github.com/labstack/echo"
 	"github.com/spf13/viper"
 	"github.com/toorop/podkstr/core"
+	"github.com/toorop/podkstr/logger"
 	"github.com/toorop/podkstr/www/appContext"
-	"github.com/toorop/podkstr/www/logger"
 )
 
 // AjSignin login and sign up

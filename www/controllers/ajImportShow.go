@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"strings"
@@ -10,8 +11,8 @@ import (
 	"github.com/labstack/echo"
 	"github.com/satori/go.uuid"
 	"github.com/toorop/podkstr/core"
+	"github.com/toorop/podkstr/logger"
 	"github.com/toorop/podkstr/www/appContext"
-	"github.com/toorop/podkstr/www/logger"
 )
 
 // AjImportShow import
@@ -70,21 +71,24 @@ func AjImportShow(ec echo.Context) error {
 	image := core.ShowImage{}
 	if feed.Channel.Image != nil {
 		image = core.ShowImage{
-			URL:    feed.Channel.Image.URL,
-			Title:  feed.Channel.Image.Title,
-			Link:   feed.Channel.Image.Link,
-			Width:  feed.Channel.Image.Width,
-			Height: feed.Channel.Image.Height,
+			URL:       feed.Channel.Image.URL,
+			URLimport: feed.Channel.Image.URL,
+			Title:     feed.Channel.Image.Title,
+			Link:      feed.Channel.Image.Link,
+			Width:     feed.Channel.Image.Width,
+			Height:    feed.Channel.Image.Height,
 		}
 	}
 	show := core.Show{
 		UUID:        uuid.NewV4().String(),
+		Locked:      false,
+		Task:        "firstsync",
 		UserID:      u.(core.User).ID,
 		Title:       feed.Channel.Title,
 		LinkImport:  feed.Channel.Link,
 		Link:        feed.Channel.Link,
-		Locked:      false,
 		Feed:        fd.FeedURL,
+		FeedImport:  fd.FeedURL,
 		Category:    feed.Channel.Category,
 		Description: feed.Channel.Description,
 		Subtitle:    feed.Channel.ItunesSubtitle,
@@ -117,10 +121,23 @@ func AjImportShow(ec echo.Context) error {
 				return
 			}
 
+			// Image
+			image := core.Image{}
+			if episode.Image != nil {
+				image = core.Image{
+					URL:       episode.Image.URL,
+					URLimport: episode.Image.URL,
+					Link:      episode.Image.Link,
+					Title:     episode.Image.Title,
+				}
+			}
+
 			// Enclosure
+			lenght, _ := strconv.ParseInt(episode.Enclosure.Length, 10, 64)
+
 			enclosure := core.Enclosure{
 				URLimport: episode.Enclosure.URL,
-				Length:    episode.Enclosure.Length,
+				Length:    lenght,
 				Type:      episode.Enclosure.Type,
 			}
 
@@ -145,6 +162,23 @@ func AjImportShow(ec echo.Context) error {
 					}
 				}
 			}
+
+			// duration
+			// soit du type H:M:S soit en secondes sinon 0 et on le calculera au first sync
+			var duration time.Duration
+			durationParts := strings.Split(episode.ItunesDuration, ":")
+			if len(durationParts) > 1 {
+				if len(durationParts) == 2 {
+					duration, _ = time.ParseDuration(fmt.Sprintf("%sm%ss", durationParts[0], durationParts[1]))
+				} else if len(durationParts) == 3 {
+					duration, _ = time.ParseDuration(fmt.Sprintf("%sh%sm%ss", durationParts[0], durationParts[1], durationParts[2]))
+				}
+			}
+			// second ?
+			if duration == 0 {
+				duration, _ = time.ParseDuration(episode.ItunesDuration + "s")
+			}
+
 			ep := core.Episode{
 				UUID:            uuid.NewV4().String(),
 				Title:           episode.Title,
@@ -154,7 +188,8 @@ func AjImportShow(ec echo.Context) error {
 				GUID:            episode.GUID,
 				GUIDisPermalink: false,
 				PubDate:         pubDate,
-				Duration:        episode.ItunesDuration,
+				Duration:        duration,
+				Image:           image,
 				Enclosure:       enclosure,
 				Keywords:        keywords,
 

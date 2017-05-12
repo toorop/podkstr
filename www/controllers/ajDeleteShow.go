@@ -5,8 +5,8 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/toorop/podkstr/core"
+	"github.com/toorop/podkstr/logger"
 	"github.com/toorop/podkstr/www/appContext"
-	"github.com/toorop/podkstr/www/logger"
 )
 
 // AjDeleteShow delete User Show
@@ -44,11 +44,11 @@ func AjDeleteShow(ec echo.Context) error {
 	}
 
 	// delete
-	logger.Log.Info(c.Request().RemoteAddr, " - ", u.(core.User).Email, " - AjDeleteShow for show ", show.UUID)
 	if err = show.Delete(); err != nil {
 		logger.Log.Error(c.Request().RemoteAddr, " - ", u.(core.User).Email, " - AjDeleteShow: show.Delete - ", err)
 		return c.JSON(http.StatusInternalServerError, resp)
 	}
+	logger.Log.Info(c.Request().RemoteAddr, " - ", u.(core.User).Email, " - has deleted show ", show.UUID)
 	resp.Ok = true
 	return c.JSON(http.StatusOK, resp)
 }

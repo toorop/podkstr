@@ -1,6 +1,10 @@
 package core
 
-import "github.com/jinzhu/gorm"
+import (
+	"time"
+
+	"github.com/jinzhu/gorm"
+)
 
 // Show represents a Show. Amazing !!!!!!
 type Show struct {
@@ -8,11 +12,14 @@ type Show struct {
 	UUID   string `gorm:"type:char(36);unique_index"`
 	UserID uint   `gorm:"index"`
 	Locked bool
+	Task   string `gorm:"index"`
 
 	Title          string `gorm:"type:varchar(1024)"`
 	Link           string `gorm:"type:varchar(1024)"`
 	LinkImport     string `gorm:"type:varchar(1024)"`
 	Feed           string `gorm:"type:varchar(1024)"`
+	LastSync       time.Time
+	FeedImport     string `gorm:"type:varchar(1024)"`
 	Category       string
 	Description    string `gorm:"type:text"`
 	Subtitle       string `gorm:"type:text"`
@@ -30,15 +37,10 @@ type Show struct {
 	Episodes []Episode
 }
 
-// ShowImage for Show.Images
-type ShowImage struct {
-	gorm.Model
-	ShowID uint
-	URL    string
-	Title  string
-	Link   string
-	Width  string
-	Height string
+// GetShowsWithTasks returns show which have tasks to do
+func GetShowsWithTasks() (shows []Show, err error) {
+	err = DB.Where("task != ''").Find(&shows).Error
+	return
 }
 
 // Lock set locked flag to true
@@ -65,7 +67,7 @@ func (s *Show) Save() error {
 
 // Update updates show in DB
 func (s *Show) Update() error {
-	return DB.Update(s).Error
+	return DB.Save(s).Error
 }
 
 // Delete delete show and episodes
@@ -93,7 +95,6 @@ func (s *Show) Delete() (err error) {
 			s.Unlock()
 			return err
 		}
-
 	}
 	// Delete show
 	if err = DB.Unscoped().Delete(s).Error; err != nil {
@@ -108,8 +109,49 @@ func (s *Show) GetEpisodes() (episodes []Episode, err error) {
 	return
 }
 
+// GetLastEpisode retuns the last episode
+func (s *Show) GetLastEpisode() (episode Episode, err error) {
+	err = DB.Model(s).Related("Episodes").Order("PubDate").First(&episode).Error
+	return
+}
+
 // AddEpisode add an episode to the show
 func (s *Show) AddEpisode(episode Episode) error {
 	s.Episodes = append(s.Episodes, episode)
 	return s.Save()
+}
+
+// GetImage return show image
+func (s *Show) GetImage() (image ShowImage, err error) {
+	err = DB.Model(s).Related(&image).Error
+	return
+}
+
+// ShowImage for Show.Images
+type ShowImage struct {
+	gorm.Model
+	ShowID     uint `gorm:"index"`
+	URL        string
+	URLimport  string
+	StorageKey string
+	Title      string
+	Link       string
+	Width      string
+	Height     string
+}
+
+// Delete delete an image
+func (i *ShowImage) Delete() error {
+	// delete from storage
+	if i.StorageKey != "" {
+		if err := Store.Del(i.StorageKey); err != nil {
+			return err
+		}
+	}
+	return DB.Unscoped().Delete(i).Error
+}
+
+// Save update Image
+func (i *ShowImage) Save() error {
+	return DB.Save(i).Error
 }

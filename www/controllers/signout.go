@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
+	"github.com/toorop/podkstr/logger"
 	"github.com/toorop/podkstr/www/appContext"
-	"github.com/toorop/podkstr/www/logger"
 )
 
 // Signout controller

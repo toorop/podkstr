@@ -28,9 +28,9 @@ import (
 	"github.com/labstack/echo/middleware"
 	"github.com/spf13/viper"
 	"github.com/toorop/podkstr/core"
+	"github.com/toorop/podkstr/logger"
 	"github.com/toorop/podkstr/www/appContext"
 	"github.com/toorop/podkstr/www/controllers"
-	"github.com/toorop/podkstr/www/logger"
 )
 
 // Main
@@ -71,10 +71,29 @@ func main() {
 	if err = core.DbAutoMigrate(); err != nil {
 		logger.Log.Fatal("unable to automigrate DB - ", err)
 	}
-	core.DB.LogMode(true)
+	core.DB.LogMode(false)
 	defer core.DB.Close()
 	logger.Log.Info("database instantiated")
 
+	/////////////////
+	// Init Storer
+	err = core.InitOsStore()
+	if err != nil {
+		logger.Log.Fatal("unable to init OsStore - ", err)
+	}
+	logger.Log.Info("openstack storer initialized ", core.Store)
+	_, err = core.Store.Get("toto")
+	logger.Log.Info("GET storer ", err)
+
+	/////////////////
+	// launch task runner
+	taskRunner := core.NewTaskRunner()
+
+	go taskRunner.Run()
+	logger.Log.Info("taskruner Launched")
+	//taskRunner.Stop()
+
+	/////////////////
 	// init echo web server
 	e := echo.New()
 
@@ -159,5 +178,6 @@ func main() {
 
 	/////////////////
 	// 10.9.8.7...0!
+	logger.Log.Info("launch http")
 	e.Logger.Fatal(e.Start(":1323"))
 }

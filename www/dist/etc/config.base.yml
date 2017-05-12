@@ -1,4 +1,4 @@
-# Bose URL
+# Base URL
 baseurl: https://podkstr.com
 cookie:
   secret: "dlkjdlfjlskjssdddfjsdkfjsldsdjf12333354qssd4"
@@ -8,6 +8,9 @@ db:
   dialect: "sqlite3"
   args: "/home/toorop/Projects/Go/src/github.com/toorop/podkstr/www/dist/etc/podkstr.db"
 
+# temp path
+temppath: "/tmp"
+
 # SMTP
 smtp:
   host: ""
@@ -16,3 +19,15 @@ smtp:
   passwd: ""
   sender: "support@podkastr.com"
   
+# Openstack Swift Provider
+openstack:
+  user: ""
+  password: ""
+  authurl: ""
+  region: ""
+  container: 
+    name: ""
+    url: ""
+  tenant:
+    name: ""
+    id: ""

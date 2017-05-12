@@ -18,6 +18,7 @@ type Feed struct {
 type Channel struct {
 	XMLName               xml.Name            `xml:"channel"`
 	Title                 string              `xml:"title"`
+	LastBuildDate         string              `xml:"lastBuildDate"`
 	Link                  string              `xml:"link"`
 	AtomLink              *AtomLink           `xml:"atom_link"`
 	Description           string              `xml:"description,omitempty"`
@@ -84,7 +85,9 @@ type Item struct {
 	GUID                  string         `xml:"guid,omitempty"`
 	GUIDisPermalink       string         `xml:"isPermaLink,attr,omitempty"`
 	PubDate               string         `xml:"pubDate,omitempty"`
-	Enclosure             *FeedEnclosure `xml:"enclosure,omitempty"`
+	Enclosure             *ItemEnclosure `xml:"enclosure,omitempty"`
+	Image                 *ItemImage     `xml:"image"`
+	ItunesImage           string         `xml:"itunes_image,omitempty"`
 	ItunesAuthor          string         `xml:"itunes_author,omitempty"`
 	ItunesSubtitle        string         `xml:"itunes_subtitle,omitempty"`
 	ItunesSummary         string         `xml:"itunes_summary,omitempty"`
@@ -96,8 +99,15 @@ type Item struct {
 	GoogleplayExplicit    string         `xml:"googleplay_explicit,omitempty"`
 }
 
-// FeedEnclosure represents Channel.Item.Enclosure
-type FeedEnclosure struct {
+// ItemImage represents Channel.Item.Image
+type ItemImage struct {
+	URL   string `xml:"url,attr,omitempty"`
+	Title string `xml:"title,attr,omitempty"`
+	Link  string `xml:"link,attr,omitempty"`
+}
+
+// ItemEnclosure represents Channel.Item.Enclosure
+type ItemEnclosure struct {
 	URL    string `xml:"url,attr,omitempty"`
 	Length string `xml:"length,attr,omitempty"`
 	Type   string `xml:"type,attr,omitempty"`
