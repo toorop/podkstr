@@ -1,5 +1,21 @@
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
     padding-top: 5rem;
+    position: relative;
+    display: table;
+    width: 100%;
+}
+
+.maincont {
+    margin-bottom: 10px;
 }
 
 .main {
@@ -7,7 +23,15 @@ body {
 }
 
 footer {
+    display: table-row;
     background-color: #212322;
+    height: 90px;
+}
+
+#tail {
+    position: absolute;
+    text-align: center;
+    bottom: 0px;
 }
 
 .show-box img {
