@@ -9,18 +9,17 @@ import (
 // Show represents a Show. Amazing !!!!!!
 type Show struct {
 	gorm.Model
-	UUID   string `gorm:"type:char(36);unique_index"`
-	UserID uint   `gorm:"index"`
-	Locked bool
-	Task   string `gorm:"index"`
+	UUID     string `gorm:"type:char(36);unique_index"`
+	UserID   uint   `gorm:"index"`
+	Locked   bool
+	Task     string `gorm:"index"`
+	Status   string
+	LastSync time.Time
 
 	Title          string `gorm:"type:varchar(1024)"`
 	Link           string `gorm:"type:varchar(1024)"`
 	LinkImport     string `gorm:"type:varchar(1024)"`
 	Feed           string `gorm:"type:varchar(1024)"`
-	LastSync       time.Time
-	FeedImport     string `gorm:"type:varchar(1024)"`
-	Category       string
 	Description    string `gorm:"type:text"`
 	Subtitle       string `gorm:"type:text"`
 	Language       string

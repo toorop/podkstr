@@ -16,10 +16,9 @@ var compShowThumbail = {
         '<br>' +
         '<ul class="list-inline show-box-icons">' +
         '<li><span  class="glyphicon glyphicon glyphicon-alert col-md-4 show-box-ico" style="color: #a94442;"  title="Status: not synchronized" @click="workinprogress"></span></li>' +
-        '<li><span class="glyphicon glyphicon glyphicon-cloud-download col-md-4 show-box-ico" title="Download Show" @click="workinprogress"></span></li>' +
+        '<li><span class="glyphicon glyphicon fa fa-rss col-md-4 show-box-ico" title="podkstr backup feed for this show" @click="workinprogress"></span></li>' +
         '<li><span class="glyphicon glyphicon glyphicon-trash col-md-4 show-box-ico" title="Delete Show"  @click="deleteshow()"></span></li>' +
         '</ul>' +
-
         '</div>' +
         '</div>' +
         '</div>',
