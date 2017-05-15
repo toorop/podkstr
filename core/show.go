@@ -76,31 +76,36 @@ func (s *Show) Delete() (err error) {
 		return err
 	}
 
+	defer s.Unlock()
+
 	// delete showImage
-	if err = DB.Unscoped().Model(s).Related(&ShowImage{}).Delete(&ShowImage{}).Error; err != nil && err != gorm.ErrRecordNotFound {
-		s.Unlock()
+	image, err := s.GetImage()
+	if err != nil {
+		return
+	}
+
+	if err = image.Delete(); err != nil {
 		return err
 	}
+	/*if err = DB.Unscoped().Model(s).Related(&ShowImage{}).Delete(&ShowImage{}).Error; err != nil && err != gorm.ErrRecordNotFound {
+		s.Unlock()
+		return err
+	}*/
 
 	// Delete épisode
 	// get show episodes
 	episodes, err := s.GetEpisodes()
 	if err != nil {
-		s.Unlock()
 		return err
 	}
 
 	for _, episode := range episodes {
 		if err = episode.Delete(); err != nil {
-			s.Unlock()
 			return err
 		}
 	}
 	// Delete show
-	if err = DB.Unscoped().Delete(s).Error; err != nil {
-		s.Unlock()
-	}
-	return err
+	return DB.Unscoped().Delete(s).Error
 }
 
 // GetEpisodes return show episodes
