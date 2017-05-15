@@ -87,10 +87,10 @@ func main() {
 
 	/////////////////
 	// launch task runner
-	taskRunner := core.NewTaskRunner()
-
+	/*taskRunner := core.NewTaskRunner()
 	go taskRunner.Run()
 	logger.Log.Info("taskruner Launched")
+	*/
 	//taskRunner.Stop()
 
 	/////////////////
@@ -118,11 +118,18 @@ func main() {
 	// Middlewares
 	// checkuser
 	e.Use(checkUser())
-
 	// Logger
-	e.Use(middleware.Logger())
+	loggerConfig := middleware.LoggerConfig{
+		Skipper: middleware.DefaultSkipper,
+		Format: `${time_rfc3339_nano} - id: ${id} - remote_ip: ${remote_ip} - host: ${host} - ` +
+			`method": ${method} - uri: ${uri} - status: ${status} - latency: ${latency} - ` +
+			`latency_human: ${latency_human} - bytes_in: ${bytes_in} - ` +
+			`bytes_out: ${bytes_out}` + "\n",
+		Output: os.Stdout,
+	}
+	e.Use(middleware.LoggerWithConfig(loggerConfig))
 	// recover
-	e.Use(middleware.Recover())
+	e.Use(Recover())
 	// Log Error
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {

@@ -72,17 +72,7 @@ var app = new Vue({
 
         // populate show
         this.updateShowsDisplay()
-        setInterval("this.updateShowsDisplay()", 300000)
-            /*axios.get('/aj/user/shows')
-                .then(function(response) {
-                    if (!response.data.Ok) {
-                        eventHub.$emit('displayError', response.data.Msg)
-                    } else {
-                        that.shows = response.data.Shows
-                    }
-                }).catch(function(error) {
-                    eventHub.$emit('displayError', "Ooops something wrong happened :(")
-                })*/
+        setInterval(this.updateShowsDisplay, 10000)
     },
     methods: {
         importShow: function() {
@@ -114,6 +104,7 @@ var app = new Vue({
         },
         updateShowsDisplay: function() {
             var that = this
+            console.log("UPDATE SHOW")
             axios.get('/aj/user/shows')
                 .then(function(response) {
                     if (!response.data.Ok) {

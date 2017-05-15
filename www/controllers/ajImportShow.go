@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -66,10 +67,9 @@ func AjImportShow(ec echo.Context) error {
 		resp.Msg = err.Error()
 		return c.JSON(http.StatusOK, resp)
 	}
-
 	// Create show
 	image := core.ShowImage{}
-	if feed.Channel.Image != nil {
+	if feed.Channel.Image != (core.FeedImage{}) {
 		image = core.ShowImage{
 			URL:       feed.Channel.Image.URL,
 			URLimport: feed.Channel.Image.URL,
@@ -79,6 +79,9 @@ func AjImportShow(ec echo.Context) error {
 			Height:    feed.Channel.Image.Height,
 		}
 	}
+
+	log.Println("ITUNESIMAGE ", feed.Channel.ItunesImage)
+
 	show := core.Show{
 		UUID:        uuid.NewV4().String(),
 		Locked:      false,
@@ -124,7 +127,7 @@ func AjImportShow(ec echo.Context) error {
 
 			// Image
 			image := core.Image{}
-			if episode.Image != nil {
+			if episode.Image != (core.ItemImage{}) {
 				image = core.Image{
 					URL:       episode.Image.URL,
 					URLimport: episode.Image.URL,

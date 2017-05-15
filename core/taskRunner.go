@@ -283,12 +283,11 @@ func firstSyncShow(show *Show) (err error) {
 		}
 		// remove temp file
 		os.Remove(filePath)
-		break
 	}
 	// TODO update show status
 	show.LastSync = time.Now()
 	// TODO do not update on err
-	show.Task = "synchronized"
+	show.Task = "sync"
 	if err = show.Save(); err != nil {
 		logger.Log.Error("TaskRunner - show.Save - ", err)
 	}
