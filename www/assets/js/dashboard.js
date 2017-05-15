@@ -15,7 +15,9 @@ var compShowThumbail = {
         //'<div class="show-box-icons">' +
         '<br>' +
         '<ul class="list-inline show-box-icons">' +
-        '<li><span  class="glyphicon glyphicon glyphicon-alert col-md-4 show-box-ico" style="color: #a94442;"  title="Status: not synchronized" @click="workinprogress"></span></li>' +
+        '<li v-if="show.Task==\'firstsync\'"><span  class="glyphicon glyphicon glyphicon-alert col-md-4 show-box-ico" style="color: #a94442;"  title="Status: not synchronized yet" @click="workinprogress"></span></li>' +
+        '<li v-if="show.Task==\'sync\'"><span class="glyphicon glyphicon glyphicon-ok-sign col-md-4 show-box-ico" style="color: #3C763D;" v-bind:title="\'Last synchronization: \' + show.LastSync" @click="workinprogress"></span></li>' +
+
         '<li><span class="glyphicon glyphicon fa fa-rss col-md-4 show-box-ico" title="podkstr backup feed for this show" @click="workinprogress"></span></li>' +
         '<li><span class="glyphicon glyphicon glyphicon-trash col-md-4 show-box-ico" title="Delete Show"  @click="deleteshow()"></span></li>' +
         '</ul>' +
@@ -28,7 +30,6 @@ var compShowThumbail = {
         },
         deleteshow: function() {
             var that = this
-            console.log("Delete" + this.show.UUID)
             axios.delete("/aj/show/delete/" + this.show.UUID)
                 .then(function(response) {
                     if (!response.data.Ok) {
@@ -41,7 +42,15 @@ var compShowThumbail = {
                     console.log("ERROR: " + error)
                     eventHub.$emit('displayError', "Ooops something wrong happened :(")
                 });
+        },
+        firstsync: function() {
+            return this.show.task == "firstsync"
+        },
+        sync: function() {
+            return
         }
+
+
     }
 }
 
@@ -62,16 +71,18 @@ var app = new Vue({
         eventHub.$on('removeShow', this.removeShow)
 
         // populate show
-        axios.get('/aj/user/shows')
-            .then(function(response) {
-                if (!response.data.Ok) {
-                    eventHub.$emit('displayError', response.data.Msg)
-                } else {
-                    that.shows = response.data.Shows
-                }
-            }).catch(function(error) {
-                eventHub.$emit('displayError', "Ooops something wrong happened :(")
-            })
+        this.updateShowsDisplay()
+        setInterval("this.updateShowsDisplay()", 300000)
+            /*axios.get('/aj/user/shows')
+                .then(function(response) {
+                    if (!response.data.Ok) {
+                        eventHub.$emit('displayError', response.data.Msg)
+                    } else {
+                        that.shows = response.data.Shows
+                    }
+                }).catch(function(error) {
+                    eventHub.$emit('displayError', "Ooops something wrong happened :(")
+                })*/
     },
     methods: {
         importShow: function() {
@@ -100,6 +111,19 @@ var app = new Vue({
                 }
             }, this);
             this.shows = newShows
+        },
+        updateShowsDisplay: function() {
+            var that = this
+            axios.get('/aj/user/shows')
+                .then(function(response) {
+                    if (!response.data.Ok) {
+                        eventHub.$emit('displayError', response.data.Msg)
+                    } else {
+                        that.shows = response.data.Shows
+                    }
+                }).catch(function(error) {
+                    eventHub.$emit('displayError', "Ooops something wrong happened :(")
+                })
         }
     }
 })

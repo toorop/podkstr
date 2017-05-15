@@ -13,13 +13,14 @@ type Show struct {
 	UserID   uint   `gorm:"index"`
 	Locked   bool
 	Task     string `gorm:"index"`
-	Status   string
 	LastSync time.Time
 
 	Title          string `gorm:"type:varchar(1024)"`
 	Link           string `gorm:"type:varchar(1024)"`
 	LinkImport     string `gorm:"type:varchar(1024)"`
 	Feed           string `gorm:"type:varchar(1024)"`
+	FeedImport     string `gorm:"type:varchar(1024)"`
+	Category       string
 	Description    string `gorm:"type:text"`
 	Subtitle       string `gorm:"type:text"`
 	Language       string

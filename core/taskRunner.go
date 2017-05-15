@@ -1,5 +1,7 @@
 package core
 
+// TODO refactor this sh*t
+
 import (
 	"fmt"
 	"io"
@@ -98,8 +100,8 @@ func firstSyncShow(show *Show) (err error) {
 
 	parts := strings.Split(image.URLimport, "/")
 	fileName := parts[len(parts)-1]
-	// Dl image
 
+	// DL image
 	resp0, err := http.Get(image.URLimport)
 	if err != nil {
 		return err
@@ -285,8 +287,8 @@ func firstSyncShow(show *Show) (err error) {
 	}
 	// TODO update show status
 	show.LastSync = time.Now()
-	// TODO do not upadte on err
-	show.Task = "sync"
+	// TODO do not update on err
+	show.Task = "synchronized"
 	if err = show.Save(); err != nil {
 		logger.Log.Error("TaskRunner - show.Save - ", err)
 	}
