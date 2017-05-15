@@ -80,13 +80,15 @@ func AjImportShow(ec echo.Context) error {
 		}
 	}
 	show := core.Show{
-		UUID:        uuid.NewV4().String(),
-		Locked:      false,
-		Task:        "firstsync",
-		UserID:      u.(core.User).ID,
-		Title:       feed.Channel.Title,
-		LinkImport:  feed.Channel.Link,
-		Link:        feed.Channel.Link,
+		UUID:       uuid.NewV4().String(),
+		Locked:     false,
+		Task:       "firstsync",
+		UserID:     u.(core.User).ID,
+		Title:      feed.Channel.Title,
+		LastSync:   time.Now(),
+		LinkImport: feed.Channel.Link,
+		Link:       feed.Channel.Link,
+
 		Feed:        fd.FeedURL,
 		FeedImport:  fd.FeedURL,
 		Category:    feed.Channel.Category,

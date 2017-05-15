@@ -12,11 +12,11 @@ type Episode struct {
 	ShowID uint   `gorm:"index"`
 	UUID   string `gorm:"type:char(36);unique_index"`
 
-	Title              string
-	Link               string
-	LinkImport         string
-	Description        string
-	Subtitle           string
+	Title              string `gorm:"type:varchar(1024)"`
+	Link               string `gorm:"type:varchar(1024)"`
+	LinkImport         string `gorm:"type:varchar(1024)"`
+	Description        string `gorm:"type:text"`
+	Subtitle           string `gorm:"type:text"`
 	GUID               string
 	GUIDisPermalink    bool
 	PubDate            time.Time
