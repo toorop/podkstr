@@ -3,7 +3,6 @@ package controllers
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	"strings"
@@ -47,7 +46,7 @@ func AjImportShow(ec echo.Context) error {
 		return c.JSON(http.StatusOK, resp)
 	}
 
-	// Check if user elready have this feed
+	// Check if user already have this feed
 	_, found, err := u.(core.User).GetShowByFeed(fd.FeedURL)
 	if err != nil {
 		resp.Msg = err.Error()
@@ -59,14 +58,21 @@ func AjImportShow(ec echo.Context) error {
 		return c.JSON(http.StatusOK, resp)
 	}
 
-	//return c.JSON(http.StatusOK, resp)
-
 	feed, err := core.NewFeed(fd.FeedURL)
 	if err != nil {
 		resp.Msg = err.Error()
 		return c.JSON(http.StatusOK, resp)
 	}
+
 	// Create show
+
+	// Last build date
+	lastBuildDate, err := time.Parse(time.RFC1123Z, feed.Channel.LastBuildDate)
+	if err != nil {
+		lastBuildDate = time.Now()
+	}
+
+	// image
 	image := core.ShowImage{}
 	if feed.Channel.Image != (core.FeedImage{}) {
 		image = core.ShowImage{
@@ -80,12 +86,14 @@ func AjImportShow(ec echo.Context) error {
 	}
 
 	show := core.Show{
-		UUID:        uuid.NewV4().String(),
-		Locked:      false,
-		Task:        "firstsync",
-		UserID:      u.(core.User).ID,
-		Title:       feed.Channel.Title,
-		LastSync:    time.Now(),
+		UUID:          uuid.NewV4().String(),
+		Locked:        false,
+		Task:          "firstsync",
+		UserID:        u.(core.User).ID,
+		Title:         feed.Channel.Title,
+		LastBuildDate: lastBuildDate,
+		LastSync:      time.Now(),
+
 		LinkImport:  feed.Channel.Link,
 		Link:        feed.Channel.Link,
 		AtomLink:    feed.Channel.AtomLink.Href,
@@ -114,98 +122,12 @@ func AjImportShow(ec echo.Context) error {
 	resp.Show = &show
 
 	go func() {
-		for _, episode := range feed.Channel.Items {
-			/*GUIDisPermalink, err := strconv.ParseBool(episode.GUIDisPermalink)
+		for _, feedEpisode := range feed.Channel.Items {
+			_, err := show.AddEpisodeFromFeed(feedEpisode)
 			if err != nil {
-				return err
-			}*/
-			// pubdate
-			pubDate, err := time.Parse("Mon, 2 Jan 2006 15:04:05 -0700", episode.PubDate)
-			if err != nil {
+				logger.Log.Error("AjImportShow - show.AddEpisodeFromFeed(ep) ", err)
 				return
 			}
-
-			// Image
-			image := core.Image{}
-			if episode.Image != (core.ItemImage{}) {
-				image = core.Image{
-					URL:        episode.Image.URL,
-					URLimport:  episode.Image.URL,
-					Link:       episode.Image.Link,
-					LinkImport: episode.Image.Link,
-					Title:      episode.Image.Title,
-				}
-			}
-
-			// Enclosure
-			lenght, _ := strconv.ParseInt(episode.Enclosure.Length, 10, 64)
-
-			enclosure := core.Enclosure{
-				URLimport: episode.Enclosure.URL,
-				Length:    lenght,
-				Type:      episode.Enclosure.Type,
-			}
-
-			// keywords
-			keywords := []core.Keyword{}
-			ks := strings.Split(episode.ItunesKeywords, ",")
-			for _, word := range ks {
-				word = strings.ToLower(strings.TrimSpace(word))
-				if word != "" {
-					// exists ?
-					k, found, err := core.GetKeyword(word)
-					if err != nil {
-						return
-					}
-					if found {
-
-						keywords = append(keywords, k)
-					} else {
-						keywords = append(keywords, core.Keyword{
-							Word: word,
-						})
-					}
-				}
-			}
-
-			// duration
-			// soit du type H:M:S soit en secondes sinon 0 et on le calculera au first sync
-			var duration time.Duration
-			durationParts := strings.Split(episode.ItunesDuration, ":")
-			if len(durationParts) > 1 {
-				if len(durationParts) == 2 {
-					duration, _ = time.ParseDuration(fmt.Sprintf("%sm%ss", durationParts[0], durationParts[1]))
-				} else if len(durationParts) == 3 {
-					duration, _ = time.ParseDuration(fmt.Sprintf("%sh%sm%ss", durationParts[0], durationParts[1], durationParts[2]))
-				}
-			}
-			// second ?
-			if duration == 0 {
-				duration, _ = time.ParseDuration(episode.ItunesDuration + "s")
-			}
-
-			ep := core.Episode{
-				UUID:            uuid.NewV4().String(),
-				Title:           episode.Title,
-				LinkImport:      episode.Link,
-				Description:     episode.Description,
-				Subtitle:        episode.ItunesSubtitle,
-				GUID:            episode.GUID,
-				GUIDisPermalink: false,
-				PubDate:         pubDate,
-				Duration:        duration,
-				Image:           image,
-				Enclosure:       enclosure,
-				Keywords:        keywords,
-
-				GoogleplayExplicit: feed.Channel.GoogleplayExplicit,
-				ItunesExplicit:     feed.Channel.ItunesExplicit,
-			}
-			if err := show.AddEpisode(ep); err != nil {
-				logger.Log.Error("AjImportShow - show.AddEpisode(ep) ", err)
-				return
-			}
-
 		}
 	}()
 

@@ -1,9 +1,14 @@
 package core
 
 import (
+	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/satori/go.uuid"
+	"github.com/spf13/viper"
 )
 
 // Show represents a Show. Amazing !!!!!!
@@ -21,6 +26,7 @@ type Show struct {
 	Feed           string `gorm:"type:varchar(1024)"`
 	FeedImport     string `gorm:"type:varchar(1024)"`
 	Category       string
+	LastBuildDate  time.Time
 	Description    string `gorm:"type:text"`
 	Subtitle       string `gorm:"type:text"`
 	Language       string
@@ -36,6 +42,19 @@ type Show struct {
 	AtomLink string `gorm:"type:varchar(1024)"`
 
 	Episodes []Episode
+}
+
+// GetShowByID returns show by ID
+func GetShowByID(ID uint) (show Show, found bool, err error) {
+	err = DB.First(&show, ID).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = nil
+		}
+		return
+	}
+	found = true
+	return
 }
 
 // GetShowsWithTasks returns show which have tasks to do
@@ -93,6 +112,15 @@ func (s *Show) Delete() (err error) {
 		return err
 	}*/
 
+	// TODO delete ItunesImage
+	if s.ItunesImage != "" && strings.HasPrefix(s.ItunesImage, viper.GetString("openstack.container.url")) {
+		key := s.ItunesImage[len(viper.GetString("openstack.container.url"))+1:]
+		if err = Store.Del(key); err != nil {
+			return err
+		}
+
+	}
+
 	// Delete épisode
 	// get show episodes
 	episodes, err := s.GetEpisodes()
@@ -117,14 +145,102 @@ func (s *Show) GetEpisodes() (episodes []Episode, err error) {
 
 // GetLastEpisode retuns the last episode
 func (s *Show) GetLastEpisode() (episode Episode, err error) {
-	err = DB.Model(s).Related("Episodes").Order("PubDate").First(&episode).Error
+	err = DB.Model(s).Related(&Episode{}).Order("pub_date desc").First(&episode).Error
 	return
 }
 
 // AddEpisode add an episode to the show
-func (s *Show) AddEpisode(episode Episode) error {
-	s.Episodes = append(s.Episodes, episode)
-	return s.Save()
+func (s *Show) AddEpisode(episode *Episode) error {
+	s.Episodes = append(s.Episodes, *episode)
+	err := s.Save()
+	return err
+}
+
+// AddEpisodeFromFeed add an épisode from feed
+func (s *Show) AddEpisodeFromFeed(feedEpisode Item) (episodeUUID string, err error) {
+	pubDate, err := time.Parse("Mon, 2 Jan 2006 15:04:05 -0700", feedEpisode.PubDate)
+	if err != nil {
+		return
+	}
+
+	// Image
+	image := Image{}
+	if feedEpisode.Image != (ItemImage{}) {
+		image = Image{
+			URL:        feedEpisode.Image.URL,
+			URLimport:  feedEpisode.Image.URL,
+			Link:       feedEpisode.Image.Link,
+			LinkImport: feedEpisode.Image.Link,
+			Title:      feedEpisode.Image.Title,
+		}
+	}
+
+	// Enclosure
+	lenght, _ := strconv.ParseInt(feedEpisode.Enclosure.Length, 10, 64)
+
+	enclosure := Enclosure{
+		URLimport: feedEpisode.Enclosure.URL,
+		Length:    lenght,
+		Type:      feedEpisode.Enclosure.Type,
+	}
+
+	// keywords
+	keywords := []Keyword{}
+	ks := strings.Split(feedEpisode.ItunesKeywords, ",")
+	for _, word := range ks {
+		word = strings.ToLower(strings.TrimSpace(word))
+		if word != "" {
+			// exists ?
+			k, found, err := GetKeyword(word)
+			if err != nil {
+				return "", err
+			}
+			if found {
+
+				keywords = append(keywords, k)
+			} else {
+				keywords = append(keywords, Keyword{
+					Word: word,
+				})
+			}
+		}
+	}
+
+	// duration
+	// soit du type H:M:S soit en secondes sinon 0 et on le calculera au first sync
+	var duration time.Duration
+	durationParts := strings.Split(feedEpisode.ItunesDuration, ":")
+	if len(durationParts) > 1 {
+		if len(durationParts) == 2 {
+			duration, _ = time.ParseDuration(fmt.Sprintf("%sm%ss", durationParts[0], durationParts[1]))
+		} else if len(durationParts) == 3 {
+			duration, _ = time.ParseDuration(fmt.Sprintf("%sh%sm%ss", durationParts[0], durationParts[1], durationParts[2]))
+		}
+	}
+	// second ?
+	if duration == 0 {
+		duration, _ = time.ParseDuration(feedEpisode.ItunesDuration + "s")
+	}
+
+	ep := Episode{
+		UUID:            uuid.NewV4().String(),
+		Title:           feedEpisode.Title,
+		LinkImport:      feedEpisode.Link,
+		Description:     feedEpisode.Description,
+		Subtitle:        feedEpisode.ItunesSubtitle,
+		GUID:            feedEpisode.GUID,
+		GUIDisPermalink: false,
+		PubDate:         pubDate,
+		Duration:        duration,
+		Image:           image,
+		Enclosure:       enclosure,
+		Keywords:        keywords,
+
+		GoogleplayExplicit: feedEpisode.GoogleplayExplicit,
+		ItunesExplicit:     feedEpisode.ItunesExplicit,
+	}
+	err = s.AddEpisode(&ep)
+	return ep.UUID, err
 }
 
 // GetImage return show image

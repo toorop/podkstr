@@ -1,9 +1,15 @@
 package core
 
 import (
+	"fmt"
 	"io"
 	"log"
+	"net/http"
+	"net/url"
+	"os"
+	"strings"
 
+	"github.com/satori/go.uuid"
 	"github.com/spf13/viper"
 	"github.com/toorop/gopenstack/context"
 	"github.com/toorop/gopenstack/identity"
@@ -70,7 +76,39 @@ func (o OsStore) Del(key string) (err error) {
 		Container: viper.GetString("openstack.container.name"),
 		Name:      key,
 	}
-	log.Println("OBJECT: ", object)
 	return object.Delete(false)
+}
 
+// StoreCopyImageFromURL copy image form URL to Store
+func StoreCopyImageFromURL(basePath, fromURL string) (Key, URL string, err error) {
+	parts := strings.Split(fromURL, "/")
+	fileName := parts[len(parts)-1]
+
+	// DL image
+	resp, err := http.Get(fromURL)
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+	key := fmt.Sprintf("%s/%s", basePath, url.QueryEscape(fileName))
+	URL = viper.GetString("openstack.container.url") + "/" + key
+
+	// push to object storage
+	filePath := viper.GetString("temppath") + "/image_" + uuid.NewV4().String()
+	fd, err := os.Create(filePath)
+	if err != nil {
+		return
+	}
+	defer fd.Close()
+	_, err = io.Copy(fd, resp.Body)
+	if err != nil {
+		return
+	}
+	fd.Seek(0, 0)
+	if err = Store.Put(key, fd); err != nil {
+		return
+	}
+	// Remove temp file
+	os.Remove(filePath)
+	return
 }

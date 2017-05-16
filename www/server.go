@@ -90,10 +90,10 @@ func main() {
 
 	/////////////////
 	// launch task runner
-	/*taskRunner := core.NewTaskRunner()
+	taskRunner := core.NewTaskRunner()
 	go taskRunner.Run()
 	logger.Log.Info("taskruner Launched")
-	*/
+
 	//taskRunner.Stop()
 
 	/////////////////
@@ -147,7 +147,6 @@ func main() {
 
 	/////////////////
 	// Templates
-
 	t := &Template{
 		templates: template.Must(template.ParseGlob(rootPath + "/views/*.html")),
 	}
