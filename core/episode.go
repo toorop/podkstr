@@ -137,6 +137,7 @@ type Image struct {
 	URLimport  string
 	Title      string
 	Link       string
+	LinkImport string
 	StorageKey string
 }
 

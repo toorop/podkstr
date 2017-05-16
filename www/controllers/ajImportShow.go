@@ -129,10 +129,11 @@ func AjImportShow(ec echo.Context) error {
 			image := core.Image{}
 			if episode.Image != (core.ItemImage{}) {
 				image = core.Image{
-					URL:       episode.Image.URL,
-					URLimport: episode.Image.URL,
-					Link:      episode.Image.Link,
-					Title:     episode.Image.Title,
+					URL:        episode.Image.URL,
+					URLimport:  episode.Image.URL,
+					Link:       episode.Image.Link,
+					LinkImport: episode.Image.Link,
+					Title:      episode.Image.Title,
 				}
 			}
 

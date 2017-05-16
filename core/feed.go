@@ -119,9 +119,9 @@ type Item struct {
 // ItemImage represents Channel.Item.Image
 type ItemImage struct {
 	XMLName xml.Name `xml:"image"`
-	URL     string   `xml:"url,attr,omitempty"`
-	Title   string   `xml:"title,attr,omitempty"`
-	Link    string   `xml:"link,attr,omitempty"`
+	URL     string   `xml:"url,omitempty"`
+	Title   string   `xml:"title,omitempty"`
+	Link    string   `xml:"link,omitempty"`
 }
 
 // ItemEnclosure represents Channel.Item.Enclosure
