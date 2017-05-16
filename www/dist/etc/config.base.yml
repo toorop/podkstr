@@ -3,6 +3,11 @@ baseurl: https://podkstr.com
 cookie:
   secret: "dlkjdlfjlskjssdddfjsdkfjsldsdjf12333354qssd4"
 
+# Logs
+log:
+  out: "stdout"
+
+
 # Database connection
 db:
   dialect: "sqlite3"

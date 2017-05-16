@@ -62,7 +62,20 @@ func main() {
 	customFormatter.FullTimestamp = true
 	logger.Log = logrus.New()
 	logger.Log.Formatter = customFormatter
-	logger.Log.Out = os.Stdout
+	// out
+	logoutStr := viper.GetString("log.out")
+	if logoutStr == "stdout" || logoutStr == "" {
+		logger.Log.Out = os.Stdout
+	} else {
+		log.Println(logoutStr)
+		f, err := os.OpenFile(logoutStr, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			log.Fatalln("unable to open log file ", logoutStr)
+		}
+		//defer f.Close()
+		log.Println(f)
+		logger.Log.Out = f
+	}
 	logger.Log.Level = logrus.DebugLevel
 	logger.Log.Info("logrus instantiated")
 

@@ -162,7 +162,6 @@ func syncShow(show *Show) (err error) {
 			if err != nil {
 				return err
 			}
-			logger.Log.Debug("fromFeedPubDate ", fromFeedPubDate, " lastlocalEp ", lastLocalEpisode.PubDate)
 			if fromFeedPubDate.After(lastLocalEpisode.PubDate) {
 				logger.Log.Debug("New episode to sync ", show.Title, feedEpisode.Title)
 

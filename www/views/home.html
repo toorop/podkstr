@@ -9,7 +9,7 @@
         <form class="form-inline">
             <div class="form-group">
                 <input type="email" class="form-control" id="email" placeholder="jane.doe@example.com">
-                <button type="submit" class="btn btn-danger">Request Early Access</button>
+                <button type="button" class="btn btn-danger">Request Early Access</button>
             </div>
 
         </form>
@@ -20,4 +20,4 @@
     <br>
 </div>
 <!-- main -->
-{{ template "footer" }} {{end}}
+{{ template "footer" . }} {{end}}
