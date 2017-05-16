@@ -14,6 +14,7 @@ func SignIn(c echo.Context) error {
 	data := tplData{
 		Title:       "Sign in or Sign up",
 		MoreScripts: []string{"vue.js", "axios.min.js", "components.js", "signin.js"},
+		Version:     c.Get("version").(string),
 	}
 	return c.Render(http.StatusOK, "signin", data)
 }

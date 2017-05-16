@@ -33,6 +33,9 @@ import (
 	"github.com/toorop/podkstr/www/controllers"
 )
 
+// Version is podkstr webapp version
+const Version = "0.1"
+
 // Main
 func main() {
 	var err error
@@ -109,6 +112,7 @@ func main() {
 	e.Use(func(h echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			cc := appContext.NewAppContext(c)
+			cc.Set("version", Version)
 			cc.SetCookieStore(sessions.NewCookieStore([]byte(viper.GetString("cookie.secret"))))
 			return h(cc)
 		}

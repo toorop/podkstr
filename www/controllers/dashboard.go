@@ -18,6 +18,7 @@ func Dashboard(c echo.Context) error {
 		Title:       "Podkstr dashboard",
 		MoreScripts: []string{"vue.js", "axios.min.js", "components.js", "dashboard.js"},
 		UserEmail:   u.(core.User).Email,
+		Version:     c.Get("version").(string),
 	}
 	return c.Render(http.StatusOK, "dashboard", data)
 }

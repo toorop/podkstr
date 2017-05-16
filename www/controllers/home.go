@@ -12,6 +12,7 @@ func Home(c echo.Context) error {
 		Title:       "Podkstr",
 		MoreScripts: []string{},
 		UserEmail:   c.Get("uEmail").(string),
+		Version:     c.Get("version").(string),
 	}
 	return c.Render(http.StatusOK, "home", data)
 }

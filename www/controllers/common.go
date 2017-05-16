@@ -5,4 +5,5 @@ type tplData struct {
 	Title       string
 	MoreScripts []string
 	UserEmail   string
+	Version     string
 }
