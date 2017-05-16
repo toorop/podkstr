@@ -77,7 +77,6 @@ var app = new Vue({
     methods: {
         importShow: function() {
             if (this.feedURL == "") {
-                console.log("emit")
                 eventHub.$emit('displayError', "You must specified a feed URL")
             }
             var that = this
@@ -88,6 +87,7 @@ var app = new Vue({
                     eventHub.$emit('displayError', response.data.Msg)
                 } else {
                     that.shows.unshift(response.data.Show)
+                    that.feedURL = ""
                 }
             }).catch(function(error) {
                 eventHub.$emit('displayError', "Ooops something wrong happened :(")
@@ -104,7 +104,6 @@ var app = new Vue({
         },
         updateShowsDisplay: function() {
             var that = this
-            console.log("UPDATE SHOW")
             axios.get('/aj/user/shows')
                 .then(function(response) {
                     if (!response.data.Ok) {
