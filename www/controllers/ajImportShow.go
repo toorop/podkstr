@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -80,8 +79,6 @@ func AjImportShow(ec echo.Context) error {
 		}
 	}
 
-	log.Println("ITUNESIMAGE ", feed.Channel.ItunesImage)
-
 	show := core.Show{
 		UUID:        uuid.NewV4().String(),
 		Locked:      false,
@@ -91,6 +88,7 @@ func AjImportShow(ec echo.Context) error {
 		LastSync:    time.Now(),
 		LinkImport:  feed.Channel.Link,
 		Link:        feed.Channel.Link,
+		AtomLink:    feed.Channel.AtomLink.Href,
 		Feed:        fd.FeedURL,
 		FeedImport:  fd.FeedURL,
 		Category:    feed.Channel.Category,
@@ -99,6 +97,8 @@ func AjImportShow(ec echo.Context) error {
 		Language:    feed.Channel.Language,
 		Copyright:   feed.Channel.Copyright,
 		Author:      feed.Channel.ItunesAuthor,
+		Owner:       feed.Channel.ItunesOwner.Name,
+		OwnerEmail:  feed.Channel.ItunesOwner.Email,
 		Image:       image,
 
 		ItunesExplicit: feed.Channel.ItunesExplicit,

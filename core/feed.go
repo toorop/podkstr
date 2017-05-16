@@ -32,7 +32,7 @@ type Channel struct {
 	Copyright             string             `xml:"copyright,omitempty"`
 	Image                 FeedImage          `xml:"image"`
 	ItunesAuthor          string             `xml:"itunes_author,omitempty"`
-	ItunesOwner           string             `xml:"itunes_owner,omitempty"`
+	ItunesOwner           ItunesOwner        `xml:"itunes_owner,omitempty"`
 	ItunesImage           ItunesImage        `xml:"itunes_image,omitempty"`
 	ItunesSubtitle        string             `xml:"itunes_subtitle,omitempty"`
 	ItunesSummary         string             `xml:"itunes_summary,omitempty"`
@@ -42,14 +42,15 @@ type Channel struct {
 	GoogleplayImage       GoogleplayImage    `xml:"googleplay_image"`
 	GoogleplayEmail       string             `xml:"googleplay_mail,omitempty"`
 	GoogleplayDescription string             `xml:"googleplay_description,omitempty"`
-	GoogleplayCategory    GoogleplayCategory `xml:"googleplay_category"`
+	GoogleplayCategory    GoogleplayCategory `xml:"googleplay_category,omitempty"`
 	GoogleplayExplicit    string             `xml:"googleplay_explicit,omitempty"`
 	Items                 []Item             `xml:"item"`
 }
 
 // AtomLink represents an atom Channel.AtomLink
 type AtomLink struct {
-	Href string `xml:"href,attr,omitempty"`
+	XMLName xml.Name `xml:"atom_link"`
+	Href    string   `xml:"href,attr,omitempty"`
 }
 
 // FeedImage represents a Channel.Image
@@ -62,6 +63,13 @@ type FeedImage struct {
 	Height  string   `xml:"height,omitempty"`
 }
 
+// ItunesOwner represents a Channel.ItunesOwner
+type ItunesOwner struct {
+	XMLName xml.Name `xml:"itunes_owner"`
+	Name    string   `xml:"itunes_name,omitempty"`
+	Email   string   `xml:"itunes_email,omitempty"`
+}
+
 // ItunesImage represents à Channel.ItunesImage
 type ItunesImage struct {
 	XMLName xml.Name `xml:"itunes_image"`
@@ -70,17 +78,20 @@ type ItunesImage struct {
 
 // ItunesCategory represents à Channel.ItunesCategory
 type ItunesCategory struct {
-	Href string `xml:"text,attr,omitempty"`
+	XMLName xml.Name `xml:"itunes_category"`
+	Href    string   `xml:"text,attr,omitempty"`
 }
 
 // GoogleplayImage represents à Channel.GoogleplayImage
 type GoogleplayImage struct {
-	Href string `xml:"href,attr,omitempty"`
+	XMLName xml.Name `xml:"googleplay_image"`
+	Href    string   `xml:"href,attr,omitempty"`
 }
 
 // GoogleplayCategory represents à Channel.GoogleplayImage
 type GoogleplayCategory struct {
-	Href string `xml:"text,attr,omitempty"`
+	XMLName xml.Name `xml:"googleplay_category"`
+	Href    string   `xml:"text,attr,omitempty"`
 }
 
 // Item represents a Channel.Item
@@ -107,16 +118,18 @@ type Item struct {
 
 // ItemImage represents Channel.Item.Image
 type ItemImage struct {
-	URL   string `xml:"url,attr,omitempty"`
-	Title string `xml:"title,attr,omitempty"`
-	Link  string `xml:"link,attr,omitempty"`
+	XMLName xml.Name `xml:"image"`
+	URL     string   `xml:"url,attr,omitempty"`
+	Title   string   `xml:"title,attr,omitempty"`
+	Link    string   `xml:"link,attr,omitempty"`
 }
 
 // ItemEnclosure represents Channel.Item.Enclosure
 type ItemEnclosure struct {
-	URL    string `xml:"url,attr,omitempty"`
-	Length string `xml:"length,attr,omitempty"`
-	Type   string `xml:"type,attr,omitempty"`
+	XMLName xml.Name `xml:"enclosure"`
+	URL     string   `xml:"url,attr,omitempty"`
+	Length  string   `xml:"length,attr,omitempty"`
+	Type    string   `xml:"type,attr,omitempty"`
 }
 
 // std XML lib doesn't handle XML prefixes...

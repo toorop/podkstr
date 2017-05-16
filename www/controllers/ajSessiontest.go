@@ -9,7 +9,7 @@ import (
 	"github.com/toorop/podkstr/www/appContext"
 )
 
-// AjSignin login and sign up
+// AjSessionTest login and sign up
 func AjSessionTest(ec echo.Context) error {
 	c := ec.(*appContext.AppContext)
 	log.Info(viper.Get("apppath"))

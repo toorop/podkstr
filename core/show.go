@@ -27,8 +27,9 @@ type Show struct {
 	Copyright      string
 	Image          ShowImage
 	Author         string
+	Owner          string
+	OwnerEmail     string
 	ItunesExplicit string
-	ItunesOwner    string
 
 	ItunesImage string
 
