@@ -122,8 +122,8 @@ func AjSignin(ec echo.Context) error {
 			logger.Log.Error(c.Request().RemoteAddr, " - Signup - models.GetUserByEmailPasswd - ", err)
 			return c.NoContent(http.StatusInternalServerError)
 		}
-		if !found {
-			logger.Log.Info(c.Request().RemoteAddr, " - Signup - user ", fd.Email, " not found")
+		if !found || (err != nil && err == bcrypt.ErrMismatchedHashAndPassword) {
+			logger.Log.Info(c.Request().RemoteAddr, " - Signup - user ", fd.Email, " not found or bad request")
 			resp.Msg = " Auth failed !"
 			return c.JSON(http.StatusOK, resp)
 		}
