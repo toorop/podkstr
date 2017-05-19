@@ -78,8 +78,8 @@ type ItunesImage struct {
 
 // ItunesCategory represents à Channel.ItunesCategory
 type ItunesCategory struct {
-	XMLName xml.Name `xml:"itunes_category"`
-	Href    string   `xml:"text,attr,omitempty"`
+	XMLName  xml.Name `xml:"itunes_category"`
+	Category string   `xml:"text,attr,omitempty"`
 }
 
 // GoogleplayImage represents à Channel.GoogleplayImage

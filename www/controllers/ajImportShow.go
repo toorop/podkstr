@@ -109,8 +109,11 @@ func AjImportShow(ec echo.Context) error {
 		OwnerEmail:  feed.Channel.ItunesOwner.Email,
 		Image:       image,
 
+		ItunesCategory: feed.Channel.ItunesCategory.Category,
 		ItunesExplicit: feed.Channel.ItunesExplicit,
 		ItunesImage:    feed.Channel.ItunesImage.Href,
+
+		GoogleplayExplicit: feed.Channel.GoogleplayExplicit,
 
 		Episodes: []core.Episode{},
 	}

@@ -11,13 +11,7 @@ import (
 
 // ActivateAccount active account
 func ActivateAccount(c echo.Context) error {
-	/*if c.Get("userEmail") != nil {
-		return c.Redirect(http.StatusPermanentRedirect, "/dashboard")
-	}*/
-
 	uuid := c.Param("uuid")
-	logger.Log.Debug("UUID ", uuid)
-
 	type tpl struct {
 		tplData
 		ValidationOk bool

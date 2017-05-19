@@ -30,6 +30,7 @@ type Episode struct {
 	Subtitle           string `gorm:"type:text"`
 	GUID               string
 	GUIDisPermalink    bool
+	Author             string `gorm:"type:varchar(1024)"`
 	PubDate            time.Time
 	Duration           time.Duration
 	Image              Image
@@ -225,6 +226,39 @@ func (e *Episode) GetKeywords() (keywords []Keyword, err error) {
 func (e *Episode) GetEnclosure() (enclosure Enclosure, err error) {
 	err = DB.Model(e).Related(&enclosure).Error
 	return
+}
+
+// FormattedPubDate returns pubdate formatted as String RFC1123Z
+func (e *Episode) FormattedPubDate() string {
+	return e.PubDate.Format(time.RFC1123Z)
+}
+
+// FormatedKeywords returns formated keywords
+func (e *Episode) FormatedKeywords() (fKeywords string) {
+	kw, err := e.GetKeywords()
+	if err != nil {
+		return ""
+	}
+	if len(kw) == 0 {
+		return
+	}
+	for _, w := range kw {
+		fKeywords += "," + w.Word
+	}
+	return fKeywords[1:]
+}
+
+// FormattedDuration returns formated duration (for RSS)
+func (e *Episode) FormattedDuration() string {
+	return fmt.Sprintf("%d", int(e.Duration.Seconds()))
+}
+
+// FormattedItunesExplicit returns RSS formated itunes explicit
+func (e *Episode) FormattedItunesExplicit() string {
+	if e.ItunesExplicit == "" {
+		e.ItunesExplicit = "no"
+	}
+	return e.ItunesExplicit
 }
 
 // Enclosure is a Episode.Enclosures

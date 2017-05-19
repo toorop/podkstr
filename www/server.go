@@ -183,6 +183,9 @@ func main() {
 	// Activate by validatin email address
 	e.GET("/activate/:uuid", controllers.ActivateAccount)
 
+	// Feed
+	e.GET("/feed/:uuid", controllers.GetShowFeed)
+
 	// private
 
 	// dashboard

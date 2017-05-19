@@ -1,0 +1,57 @@
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>{{ .Show.Title }}</title>
+        <link>{{ .BaseURL }}/show/{{ .Show.UUID }}</link>
+        <description>{{ .Show.Description }}</description>
+        <atom:link href="{{ .BaseURL }}/feed/{{ .Show.UUID }}" rel="self" type="application/rss+xml" />
+        <language>{{ .Show.Language }}</language>
+        <category>{{ .Show.Category }}</category>
+        <copyright>{{ .Show.Copyright }}</copyright>
+        <image>
+            <url>{{ .Show.Image.URL }}</url>
+            <title>{{ .Show.Image.Title }}</title>
+            <link>{{ .Show.Image.Link }}</link>
+        </image>
+        <itunes:author>{{ .Show.Author }}</itunes:author>
+        <itunes:owner>
+            <itunes:name>{{ .Show.Owner }}</itunes:name>
+            <itunes:email>{{ .Show.OwnerEmail }}</itunes:email>
+        </itunes:owner>
+        <itunes:image href="{{ .Show.ItunesImage }}" />
+        <itunes:subtitle>{{ .Show.Subtitle }}</itunes:subtitle>
+        <itunes:summary>{{ .Show.Description }}</itunes:summary>
+        <itunes:category text="{{ .Show.ItunesCategory }}" />
+        <itunes:explicit>{{ .Show.ItunesExplicit }}</itunes:explicit>
+        <googleplay:author>{{ .Show.Author }}</googleplay:author>
+        <googleplay:image href="{{ .Show.Image.URL }}" />
+        <googleplay:email>{{ .Show.OwnerEmail }}</googleplay:email>
+        <googleplay:description>{{ .Show.Description }}</googleplay:description>
+        <googleplay:category text="{{ .Show.Category }}" />
+        <googleplay:explicit>{{ .Show.GoogleplayExplicit }}</googleplay:explicit>
+        {{range .Show.Episodes}}
+            <item>
+                <title>{{ .Title }}</title>
+                <link>{{ $.BaseURL }}/show/{{ $.Show.UUID }}/episode/{{ .UUID }}</link>
+                <description>{{ .Description }}</description>
+                <guid isPermaLink="false">{{ .GUID }}</guid>
+                <pubDate>{{ .FormattedPubDate }}</pubDate>
+                <image>
+                    <url>{{ .Image.URL }}</url>
+                    <title>{{ .Image.Title }}</title>
+                    <link>{{ .Image.Link }}</link>
+                </image>
+                <enclosure url="{{ .Enclosure.URL }}" length="{{ .Enclosure.Length }}" type="{{ .Enclosure.Type }}" />
+                <itunes:author>{{ .Author }}</itunes:author>              
+                <itunes:subtitle>{{ .Subtitle }}</itunes:subtitle>
+                <itunes:summary>{{ .Description }}</itunes:summary>
+                <itunes:duration>{{ .FormattedDuration }}</itunes:duration>
+                <itunes:keywords>{{ .FormatedKeywords }}</itunes:keywords>
+                <itunes:explicit>{{ .FormattedItunesExplicit }}</itunes:explicit>
+                <googleplay:author>{{ .Author }}</googleplay:author>
+                <googleplay:description>{{ .Description }}</googleplay:description>
+                <googleplay:explicit>{{ .GoogleplayExplicit }}</googleplay:explicit>
+            </item>
+        <!-- end of  -->
+        {{end}}
+    </channel>
+</rss>

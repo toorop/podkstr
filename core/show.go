@@ -20,24 +20,27 @@ type Show struct {
 	Task     string `gorm:"index"`
 	LastSync time.Time
 
-	Title          string `gorm:"type:varchar(1024)"`
-	Link           string `gorm:"type:varchar(1024)"`
-	LinkImport     string `gorm:"type:varchar(1024)"`
-	Feed           string `gorm:"type:varchar(1024)"`
-	FeedImport     string `gorm:"type:varchar(1024)"`
-	Category       string
-	LastBuildDate  time.Time
-	Description    string `gorm:"type:text"`
-	Subtitle       string `gorm:"type:text"`
-	Language       string
-	Copyright      string
-	Image          ShowImage
-	Author         string
-	Owner          string
-	OwnerEmail     string
-	ItunesExplicit string
+	Title         string `gorm:"type:varchar(1024)"`
+	Link          string `gorm:"type:varchar(1024)"`
+	LinkImport    string `gorm:"type:varchar(1024)"`
+	Feed          string `gorm:"type:varchar(1024)"`
+	FeedImport    string `gorm:"type:varchar(1024)"`
+	Category      string
+	LastBuildDate time.Time
+	Description   string `gorm:"type:text"`
+	Subtitle      string `gorm:"type:text"`
+	Language      string
+	Copyright     string
+	Image         ShowImage
+	Author        string
+	Owner         string
+	OwnerEmail    string
 
-	ItunesImage string
+	ItunesCategory string
+	ItunesExplicit string
+	ItunesImage    string
+
+	GoogleplayExplicit string
 
 	AtomLink string `gorm:"type:varchar(1024)"`
 
@@ -47,6 +50,19 @@ type Show struct {
 // GetShowByID returns show by ID
 func GetShowByID(ID uint) (show Show, found bool, err error) {
 	err = DB.First(&show, ID).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = nil
+		}
+		return
+	}
+	found = true
+	return
+}
+
+// GetShowByUUID returns a show by its UUID
+func GetShowByUUID(UUID string) (show Show, found bool, err error) {
+	err = DB.Where("uuid = ?", UUID).First(&show).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = nil
@@ -230,6 +246,7 @@ func (s *Show) AddEpisodeFromFeed(feedEpisode Item) (episodeUUID string, err err
 		Subtitle:        feedEpisode.ItunesSubtitle,
 		GUID:            feedEpisode.GUID,
 		GUIDisPermalink: false,
+		Author:          feedEpisode.ItunesAuthor,
 		PubDate:         pubDate,
 		Duration:        duration,
 		Image:           image,

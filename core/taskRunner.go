@@ -120,6 +120,7 @@ func firstSyncShow(show *Show) (err error) {
 	for _, episode := range episodes {
 		if err = episode.Sync(); err != nil {
 			logger.Log.Error(fmt.Sprintf("TaskRunner - %s", err))
+			return
 		}
 
 	}
