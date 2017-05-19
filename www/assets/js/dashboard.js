@@ -18,7 +18,7 @@ var compShowThumbail = {
         '<li v-if="show.Task==\'firstsync\'"><span  class="glyphicon glyphicon glyphicon-alert col-md-4 show-box-ico" style="color: #a94442;"  title="Status: not synchronized yet" @click="workinprogress"></span></li>' +
         '<li v-if="show.Task==\'sync\'"><span class="glyphicon glyphicon glyphicon-ok-sign col-md-4 show-box-ico" style="color: #3C763D;" v-bind:title="\'Last synchronization: \' + show.LastSync" @click="workinprogress"></span></li>' +
 
-        '<li><span class="glyphicon glyphicon fa fa-rss col-md-4 show-box-ico" title="podkstr backup feed for this show" @click="workinprogress"></span></li>' +
+        '<li><a v-bind:href="\'/feed/\' + show.UUID" target="_blank"><span class="glyphicon glyphicon fa fa-rss col-md-4 show-box-ico" title="podkstr backup feed for this show"></span></a></li>' +
         '<li><span class="glyphicon glyphicon glyphicon-trash col-md-4 show-box-ico" title="Delete Show"  @click="deleteshow()"></span></li>' +
         '</ul>' +
         '</div>' +
