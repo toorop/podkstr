@@ -180,6 +180,9 @@ func main() {
 	// Signout
 	e.GET("/signout", controllers.Signout)
 
+	// Activate by validatin email address
+	e.GET("/activate/:uuid", controllers.ActivateAccount)
+
 	// private
 
 	// dashboard
@@ -189,6 +192,9 @@ func main() {
 
 	// signin signup
 	e.POST("/ajsignin", controllers.AjSignin)
+
+	// renvoie le mail d'activation
+	e.POST("/ajresendactivationemail", controllers.AjResendActivationEmail)
 
 	// Import Show
 	e.POST("/ajimportshow", controllers.AjImportShow)

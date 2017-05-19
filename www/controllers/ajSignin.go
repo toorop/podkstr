@@ -104,9 +104,9 @@ func AjSignin(ec echo.Context) error {
 		}
 
 		m := gomail.NewMessage()
-		m.SetAddressHeader("From", viper.GetString("smtp.sender"), "Podkastr")
+		m.SetAddressHeader("From", viper.GetString("smtp.sender"), "Podkstr")
 		m.SetAddressHeader("To", user.Email, user.Email)
-		m.SetHeader("Subject", "Welcome to Podcastr !")
+		m.SetHeader("Subject", "Welcome to Podkstr !")
 		m.SetBody("text/plain", buf.String())
 
 		d := gomail.NewPlainDialer(viper.GetString("smtp.host"), viper.GetInt("smtp.port"), viper.GetString("smtp.user"), viper.GetString("smtp.passwd"))

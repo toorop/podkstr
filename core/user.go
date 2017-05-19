@@ -22,6 +22,7 @@ type User struct {
 	Email          string `gorm:"unique_index"`
 	Passwd         string
 	ValidationUUID string `gorm:"type:char(36);unique_index"`
+	Activated      bool
 	Shows          []Show
 }
 
@@ -78,6 +79,19 @@ func UserGetByEmailPasswd(email, passwd string) (u User, found bool, err error) 
 	return
 }
 
+// UserGetByValidationUUID get user by its validation UUID
+func UserGetByValidationUUID(uuid string) (u User, found bool, err error) {
+	err = DB.Where("validation_uuid = ?", uuid).First(&u).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = nil
+		}
+		return
+	}
+	found = true
+	return
+}
+
 // GetShows returns User shows
 func (u User) GetShows() (shows []Show, err error) {
 	err = DB.Model(&u).Related(&shows).Error
@@ -111,4 +125,9 @@ func (u User) GetShowByUUID(uuid string) (show Show, found bool, err error) {
 	}
 	found = true
 	return
+}
+
+// Save saves user
+func (u *User) Save() error {
+	return DB.Save(u).Error
 }
