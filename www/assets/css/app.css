@@ -1,56 +1,59 @@
+.show-box img,
+.show-box-ico {
+    cursor: pointer
+}
+
 html {
     height: 100%;
     margin: 0;
-    padding: 0;
+    padding: 0
 }
 
 body {
     min-height: 100%;
     margin: 0;
-    padding: 0;
-    padding-top: 5rem;
+    padding: 5rem 0 0;
     position: relative;
     display: table;
-    width: 100%;
+    width: 100%
 }
 
 .maincont {
-    margin-bottom: 10px;
+    margin-bottom: 10px
 }
 
 .main {
-    padding: 3rem 1.5rem;
+    padding: 3rem 1.5rem
 }
 
 footer {
     display: table-row;
     background-color: #212322;
-    height: 110px;
+    /* height: 110px; -> problem width footer height */
+    max-width: 100%;
+    padding: 20px 20px 0 20px;
+    /* up, right, bottom, left and better than <br> sir ;-) */
 }
 
 #tail {
-    position: absolute;
+    /* modifs tom -> position: absolute; get an absolut if you want to drink but not here for your css ;-) */
     text-align: center;
-    bottom: 0px;
-}
-
-.show-box img {
-    cursor: pointer;
+    padding-top: 20px;
+    /* better than <br> sir ;-) */
+    padding-bottom: 20px;
+    /* better than <br> sir ;-) */
+    /* bottom: 0 -> modifs tom : no-need here */
 }
 
 .show-box .caption {
-    padding-top: 0px;
+    padding-top: 0
 }
 
 .show-box .caption ul {
-    margin-bottom: 0px;
+    margin-bottom: 0
 }
 
 .show-box-icons {
     font-size: 30px;
-    text-align: center;
-}
-
-.show-box-ico {
-    cursor: pointer;
+    text-align: center
 }
