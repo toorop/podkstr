@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"path"
 
+	"strings"
+
 	"github.com/labstack/echo"
 	"github.com/spf13/viper"
 	"github.com/toorop/podkstr/core"
@@ -55,6 +57,10 @@ func GetShowFeed(c echo.Context) error {
 		if err != nil {
 			logger.Log.Error(fmt.Sprintf("%s - GetShowFeed -> ep.GetEnclosure() - %s ", c.Request().RemoteAddr, err))
 			return c.NoContent(http.StatusInternalServerError)
+		}
+		// Enclosure URL must be http and not https (WTF !!!)
+		if strings.HasPrefix(show.Episodes[i].Enclosure.URL, "https://") {
+			show.Episodes[i].Enclosure.URL = "http://" + show.Episodes[i].Enclosure.URL[8:]
 		}
 	}
 
