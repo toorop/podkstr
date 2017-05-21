@@ -53,11 +53,12 @@ func GetShowFeed(c echo.Context) error {
 
 	// Enclosures
 	for i, ep := range show.Episodes {
-		show.Episodes[i].Enclosure, err = ep.GetEnclosure()
+		show.Episodes[i].Enclosure, _, err = ep.GetEnclosure()
 		if err != nil {
 			logger.Log.Error(fmt.Sprintf("%s - GetShowFeed -> ep.GetEnclosure() - %s ", c.Request().RemoteAddr, err))
 			return c.NoContent(http.StatusInternalServerError)
 		}
+
 		// Enclosure URL must be http and not https (WTF !!!)
 		if strings.HasPrefix(show.Episodes[i].Enclosure.URL, "https://") {
 			show.Episodes[i].Enclosure.URL = "http://" + show.Episodes[i].Enclosure.URL[8:]
