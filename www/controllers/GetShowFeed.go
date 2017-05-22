@@ -53,6 +53,7 @@ func GetShowFeed(c echo.Context) error {
 
 	// Enclosures
 	for i, ep := range show.Episodes {
+		//logger.Log.Debug("EP TITLE ", ep.Title)
 		show.Episodes[i].Enclosure, _, err = ep.GetEnclosure()
 		if err != nil {
 			logger.Log.Error(fmt.Sprintf("%s - GetShowFeed -> ep.GetEnclosure() - %s ", c.Request().RemoteAddr, err))

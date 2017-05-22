@@ -155,13 +155,29 @@ func (s *Show) Delete() (err error) {
 
 // GetEpisodes return show episodes
 func (s *Show) GetEpisodes() (episodes []Episode, err error) {
-	err = DB.Model(s).Related(&episodes, "Episodes").Error
+	//err = DB.Model(s).Related(&Episode{}).Order("pub_date desc").Find(&episodes).Error
+	//err = DB.Model(s).Related(&episodes, "Episodes").Order("pub_date desc").Error
+	err = DB.Model(&Episode{}).Where("show_id = ?", s.ID).Order("pub_date desc").Find(&episodes).Error
+
 	return
 }
 
 // GetLastEpisode retuns the last episode
 func (s *Show) GetLastEpisode() (episode Episode, err error) {
 	err = DB.Model(s).Related(&Episode{}).Order("pub_date desc").First(&episode).Error
+	return
+}
+
+// GetEpisodeByGUID returns Show episode by it GUID
+func (s *Show) GetEpisodeByGUID(GUID string) (episode Episode, found bool, err error) {
+	err = DB.Model(&Episode{}).Where("guid = ? AND show_id = ?", GUID, s.ID).First(&episode).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = nil
+		}
+		return
+	}
+	found = true
 	return
 }
 
@@ -173,7 +189,7 @@ func (s *Show) AddEpisode(episode *Episode) error {
 }
 
 // AddEpisodeFromFeed add an épisode from feed
-func (s *Show) AddEpisodeFromFeed(feedEpisode Item) (episodeUUID string, err error) {
+func (s *Show) AddEpisodeFromFeed(feedEpisode Item) (episode Episode, err error) {
 	pubDate, err := time.Parse("Mon, 2 Jan 2006 15:04:05 -0700", feedEpisode.PubDate)
 	if err != nil {
 		return
@@ -209,7 +225,7 @@ func (s *Show) AddEpisodeFromFeed(feedEpisode Item) (episodeUUID string, err err
 			// exists ?
 			k, found, err := GetKeyword(word)
 			if err != nil {
-				return "", err
+				return episode, err
 			}
 			if found {
 
@@ -238,7 +254,7 @@ func (s *Show) AddEpisodeFromFeed(feedEpisode Item) (episodeUUID string, err err
 		duration, _ = time.ParseDuration(feedEpisode.ItunesDuration + "s")
 	}
 
-	ep := Episode{
+	episode = Episode{
 		UUID:            uuid.NewV4().String(),
 		Title:           feedEpisode.Title,
 		LinkImport:      feedEpisode.Link,
@@ -256,8 +272,14 @@ func (s *Show) AddEpisodeFromFeed(feedEpisode Item) (episodeUUID string, err err
 		GoogleplayExplicit: feedEpisode.GoogleplayExplicit,
 		ItunesExplicit:     feedEpisode.ItunesExplicit,
 	}
-	err = s.AddEpisode(&ep)
-	return ep.UUID, err
+	if err = s.AddEpisode(&episode); err != nil {
+		return episode, err
+	}
+	episode, found, err := GetEpisodeByUUID(episode.UUID)
+	if err == nil && !found {
+		err = fmt.Errorf("episode %d-%s not found", s.ID, episode.UUID)
+	}
+	return episode, err
 }
 
 // GetImage return show image

@@ -80,7 +80,7 @@ func (o OsStore) Del(key string) (err error) {
 }
 
 // StoreCopyImageFromURL copy image form URL to Store
-func StoreCopyImageFromURL(basePath, fromURL string) (Key, URL string, err error) {
+func StoreCopyImageFromURL(basePath, fromURL string) (key, URL string, err error) {
 	parts := strings.Split(fromURL, "/")
 	fileName := parts[len(parts)-1]
 
@@ -90,7 +90,7 @@ func StoreCopyImageFromURL(basePath, fromURL string) (Key, URL string, err error
 		return
 	}
 	defer resp.Body.Close()
-	key := fmt.Sprintf("%s/%s", basePath, url.QueryEscape(fileName))
+	key = fmt.Sprintf("%s/%s", basePath, url.QueryEscape(fileName))
 	URL = viper.GetString("openstack.container.url") + "/" + key
 
 	// push to object storage

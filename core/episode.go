@@ -28,7 +28,7 @@ type Episode struct {
 	LinkImport         string `gorm:"type:varchar(1024)"`
 	Description        string `gorm:"type:text"`
 	Subtitle           string `gorm:"type:text"`
-	GUID               string
+	GUID               string `gorm:"type:varchar(1024);index"` // Original UUID for import
 	GUIDisPermalink    bool
 	Author             string `gorm:"type:varchar(1024)"`
 	PubDate            time.Time
@@ -43,6 +43,19 @@ type Episode struct {
 // GetEpisodeByUUID returns (or not) an episode by UUID
 func GetEpisodeByUUID(UUID string) (episode Episode, found bool, err error) {
 	err = DB.Where("uuid = ?", UUID).First(&episode).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = nil
+		}
+		return
+	}
+	found = true
+	return
+}
+
+// GetEpisodeByGUID returns an episode by its GUID
+func GetEpisodeByGUID(GUID string) (episode Episode, found bool, err error) {
+	err = DB.Where("guid = ?", GUID).First(&episode).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = nil
@@ -79,12 +92,14 @@ func (e Episode) Delete() (err error) {
 	}
 	// Enclosure
 	var enclosure Enclosure
-	enclosure, err = e.GetEnclosure()
+	enclosure, found, err = e.GetEnclosure()
 	if err != nil {
 		return err
 	}
-	if err = enclosure.Delete(); err != nil {
-		return err
+	if found {
+		if err = enclosure.Delete(); err != nil {
+			return err
+		}
 	}
 
 	// delete episode keywords
@@ -104,7 +119,6 @@ func (e Episode) Delete() (err error) {
 
 // Sync synchronize an episode
 func (e *Episode) Sync() error {
-
 	show, found, err := GetShowByID(e.ShowID)
 	if err != nil {
 		return err
@@ -132,10 +146,14 @@ func (e *Episode) Sync() error {
 
 	////////////////////
 	// enclosure
-	enclosure, err := e.GetEnclosure()
+	enclosure, found, err := e.GetEnclosure()
 	if err != nil {
 		return fmt.Errorf("unable to getEnclosure() for episode %d - %s", e.ID, err)
 	}
+	if !found {
+		return fmt.Errorf("enclosure not found for episode %d - %s", e.ID, err)
+	}
+
 	resp, err := http.Get(enclosure.URLimport)
 	if err != nil {
 		return fmt.Errorf("unable to http.Get(%s) for episode %d - %s", enclosure.URLimport, e.ID, err)
@@ -195,11 +213,11 @@ func (e *Episode) Sync() error {
 	if err = enclosure.Update(); err != nil {
 		return fmt.Errorf("unable to enclosure.Update() for episode %d - %s", e.ID, err)
 	}
-
 	// update episode
 	if err = e.Update(); err != nil {
 		return fmt.Errorf("unable to e.Update() for episode %d - %s", e.ID, err)
 	}
+
 	return nil
 }
 
@@ -223,8 +241,15 @@ func (e *Episode) GetKeywords() (keywords []Keyword, err error) {
 }
 
 // GetEnclosure return episode enclosure
-func (e *Episode) GetEnclosure() (enclosure Enclosure, err error) {
+func (e *Episode) GetEnclosure() (enclosure Enclosure, found bool, err error) {
 	err = DB.Model(e).Related(&enclosure).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = nil
+		}
+		return
+	}
+	found = true
 	return
 }
 
