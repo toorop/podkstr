@@ -84,13 +84,13 @@ func firstSyncShow(show *Show) (err error) {
 	defer show.Unlock()
 
 	// get show image
-	image, err := show.GetImage()
+	image, found, err := show.GetImage()
 	if err != nil {
 		return err
 	}
 
-	// TODO check if there is an image
-	if image != (ShowImage{}) {
+	// if there is an image
+	if found {
 		image.StorageKey, image.URL, err = StoreCopyImageFromURL(fmt.Sprintf("show/%s", show.UUID), image.URLimport)
 		if err != nil {
 			logger.Log.Error(fmt.Sprintf("TaskRunner - StoreCopyImageFromURL - %s", err))
@@ -112,7 +112,6 @@ func firstSyncShow(show *Show) (err error) {
 			return err
 		}
 		show.ItunesImage = iURL
-		logger.Log.Debug("SHOW URL ", iURL)
 	}
 
 	// get all episode

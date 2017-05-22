@@ -2,7 +2,6 @@ var eventHub = new Vue()
 
 Vue.component('alert-box', {
     delimiters: ["[[", "]]"],
-    //props: ['alertDanger', 'alertSuccess', 'alertMessage'],
     data: function() {
         return {
             showAlert: false,
@@ -50,6 +49,39 @@ Vue.component('alert-box', {
         },
         displaySuccess: function(message) {
             this.display(message, "success")
+        }
+    }
+})
+
+
+Vue.component('modal-wait', {
+    delimiters: ["[[", "]]"],
+    data: function() {
+        return {
+            show: false,
+            message: 'wait...'
+        }
+    },
+    template: '<div class="modal-mask" v-show="show" transition="modal">' +
+        '<div class="modal-wait-body">' +
+        '<img src="/static/img/gear.svg">' +
+        '<p><h3> [[ message ]]</h3></p>' +
+        '</div></div>',
+
+    created: function() {
+        eventHub.$on('displayModalWait', this.display)
+        eventHub.$on('hideModalWait', this.hide)
+    },
+
+
+    methods: {
+        display: function(msg) {
+            this.message = msg
+            this.show = true
+        },
+        hide: function() {
+            this.show = false
+            this.message = 'wait...'
         }
     }
 })

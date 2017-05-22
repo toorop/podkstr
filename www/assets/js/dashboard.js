@@ -29,6 +29,7 @@ var compShowThumbail = {
             eventHub.$emit('displaySuccess', 'Work in progress... ;)')
         },
         deleteshow: function() {
+            eventHub.$emit('displayModalWait', 'deletion in progress...')
             var that = this
             axios.delete("/aj/show/delete/" + this.show.UUID)
                 .then(function(response) {
@@ -37,11 +38,14 @@ var compShowThumbail = {
                     } else {
                         eventHub.$emit('removeShow', that.show.UUID)
                     }
+                    eventHub.$emit('hideModalWait')
                 })
                 .catch(function(error) {
                     console.log("ERROR: " + error)
                     eventHub.$emit('displayError', "Ooops something wrong happened :(")
+                    eventHub.$emit('hideModalWait')
                 });
+
         },
         firstsync: function() {
             return this.show.task == "firstsync"
@@ -72,7 +76,7 @@ var app = new Vue({
 
         // populate show
         this.updateShowsDisplay()
-        setInterval(this.updateShowsDisplay, 100000)
+        setInterval(this.updateShowsDisplay, 300000)
     },
     methods: {
         importShow: function() {

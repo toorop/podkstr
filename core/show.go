@@ -9,6 +9,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/satori/go.uuid"
 	"github.com/spf13/viper"
+	"github.com/toorop/podkstr/logger"
 )
 
 // Show represents a Show. Amazing !!!!!!
@@ -111,30 +112,32 @@ func (s *Show) Delete() (err error) {
 	if err = s.Lock(); err != nil {
 		return err
 	}
-
 	defer s.Unlock()
 
 	// delete showImage
-	image, err := s.GetImage()
+	image, found, err := s.GetImage()
 	if err != nil {
 		return
 	}
 
-	if err = image.Delete(); err != nil {
-		return err
+	if found {
+		if err = image.Delete(); err != nil {
+			return err
+		}
 	}
 	/*if err = DB.Unscoped().Model(s).Related(&ShowImage{}).Delete(&ShowImage{}).Error; err != nil && err != gorm.ErrRecordNotFound {
 		s.Unlock()
 		return err
 	}*/
 
-	// TODO delete ItunesImage
+	// delete ItunesImage
 	if s.ItunesImage != "" && strings.HasPrefix(s.ItunesImage, viper.GetString("openstack.container.url")) {
 		key := s.ItunesImage[len(viper.GetString("openstack.container.url"))+1:]
 		if err = Store.Del(key); err != nil {
-			return err
+			if !strings.HasPrefix(err.Error(), "404") {
+				return err
+			}
 		}
-
 	}
 
 	// Delete épisode
@@ -283,8 +286,16 @@ func (s *Show) AddEpisodeFromFeed(feedEpisode Item) (episode Episode, err error)
 }
 
 // GetImage return show image
-func (s *Show) GetImage() (image ShowImage, err error) {
+func (s *Show) GetImage() (image ShowImage, found bool, err error) {
 	err = DB.Model(s).Related(&image).Error
+	logger.Log.Debug("SHOWGETIMAGE ", err)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = nil
+		}
+		return
+	}
+	found = true
 	return
 }
 

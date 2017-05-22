@@ -64,7 +64,6 @@ func AjSignin(ec echo.Context) error {
 	// Login
 	// Signup
 	if fd.Signup {
-		logger.Log.Debug(c.Request().RemoteAddr, " - Signup")
 		fd.Passwd2 = strings.TrimSpace(strings.ToLower(fd.Passwd2))
 		if fd.Passwd2 == "" {
 			logger.Log.Info(c.Request().RemoteAddr, " - Signup - bad request passwd2 is missing")

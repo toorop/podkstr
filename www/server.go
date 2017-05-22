@@ -87,7 +87,7 @@ func main() {
 	if err = core.DbAutoMigrate(); err != nil {
 		logger.Log.Fatal("unable to automigrate DB - ", err)
 	}
-	core.DB.LogMode(true)
+	core.DB.LogMode(false)
 	defer core.DB.Close()
 	logger.Log.Info("database instantiated")
 

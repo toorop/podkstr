@@ -53,7 +53,6 @@ func GetShowFeed(c echo.Context) error {
 
 	// Enclosures
 	for i, ep := range show.Episodes {
-		//logger.Log.Debug("EP TITLE ", ep.Title)
 		show.Episodes[i].Enclosure, _, err = ep.GetEnclosure()
 		if err != nil {
 			logger.Log.Error(fmt.Sprintf("%s - GetShowFeed -> ep.GetEnclosure() - %s ", c.Request().RemoteAddr, err))
@@ -76,7 +75,7 @@ func GetShowFeed(c echo.Context) error {
 	}
 
 	// Show Image
-	show.Image, err = show.GetImage()
+	show.Image, _, err = show.GetImage()
 	if err != nil {
 		logger.Log.Error(fmt.Sprintf("%s - GetShowFeed -> show.GetImage - %s ", c.Request().RemoteAddr, err))
 		return c.NoContent(http.StatusInternalServerError)

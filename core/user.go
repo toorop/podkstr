@@ -3,7 +3,6 @@ package core
 import (
 	"errors"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/asaskevich/govalidator"
@@ -102,7 +101,6 @@ func (u User) GetShows() (shows []Show, err error) {
 func (u User) GetShowByFeed(url string) (show Show, found bool, err error) {
 	url = strings.ToLower(strings.TrimSpace(url))
 	err = DB.Model(&u).Related(&Show{}).Where("feed = ?", url).First(&show).Error
-	log.Println(err, found, show)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = nil
@@ -116,7 +114,6 @@ func (u User) GetShowByFeed(url string) (show Show, found bool, err error) {
 // GetShowByUUID return an user show by his uuid
 func (u User) GetShowByUUID(uuid string) (show Show, found bool, err error) {
 	err = DB.Model(&u).Related(&Show{}).Where("uuid = ?", uuid).First(&show).Error
-	log.Println(err, found, show)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = nil

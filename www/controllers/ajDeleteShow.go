@@ -48,7 +48,7 @@ func AjDeleteShow(ec echo.Context) error {
 		logger.Log.Error(c.Request().RemoteAddr, " - ", u.(core.User).Email, " - AjDeleteShow: show.Delete - ", err)
 		return c.JSON(http.StatusInternalServerError, resp)
 	}
-	logger.Log.Info(c.Request().RemoteAddr, " - ", u.(core.User).Email, " - has deleted show ", show.UUID)
+	logger.Log.Info(c.Request().RemoteAddr, " - ", u.(core.User).Email, " - has deleted show ", show.Title)
 	resp.Ok = true
 	return c.JSON(http.StatusOK, resp)
 }

@@ -45,6 +45,33 @@ footer {
     /* bottom: 0 -> modifs tom : no-need here */
 }
 
+
+/* Modal wait */
+
+.modal-mask {
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .5);
+    transition: opacity .3s ease;
+}
+
+.modal-wait-body {
+    position: absolute;
+    top: 33%;
+    left: 50%;
+    margin-left: -85px;
+    margin-top: -85px;
+    text-align: center;
+    color: #ccc;
+}
+
+
+/* Show box */
+
 .show-box .caption {
     padding-top: 0
 }
