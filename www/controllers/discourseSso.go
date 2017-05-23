@@ -18,7 +18,7 @@ import (
 // https://meta.discourse.org/t/official-single-sign-on-for-discourse/13045
 func DiscourseSSO(c echo.Context) error {
 	const URL = "https://board.podkstr.com/session/sso_login?"
-	const secret = "jeuoapnsbgettdjsssqhdk"
+	const secret = "jeuoapnsbgettdjsssqhdk" // oh shit the secret is now public !!!!
 	var nonce string
 	// chek auth
 	u := c.Get("user")
