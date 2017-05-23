@@ -180,8 +180,12 @@ func main() {
 	// Signout
 	e.GET("/signout", controllers.Signout)
 
-	// Activate by validatin email address
+	// Activate by validating email address
 	e.GET("/activate/:uuid", controllers.ActivateAccount)
+
+	// Reset Passwd
+	e.GET("reset-password", controllers.ResetPassword)
+	e.GET("reset-password/:uuid", controllers.ResetPassword)
 
 	// Feed
 	e.GET("/feed/:uuid", controllers.GetShowFeed)
@@ -196,7 +200,13 @@ func main() {
 	// signin signup
 	e.POST("/ajsignin", controllers.AjSignin)
 
-	// renvoie le mail d'activation
+	// send reset password email
+	e.POST("/ajsendresetpasswordemail", controllers.AjSendResetPasswordEmail)
+
+	// reset password
+	e.POST("/ajresetpassword", controllers.AjResetPassword)
+
+	// renvoi le mail d'activation
 	e.POST("/ajresendactivationemail", controllers.AjResendActivationEmail)
 
 	// Import Show
@@ -207,6 +217,10 @@ func main() {
 
 	// Get User Shows
 	e.GET("/aj/user/shows", controllers.AjGetUserShows)
+
+
+	// Discourse SSO
+	.GET("discourse/sso", controllers.DiscourseSSO)
 
 	/////////////////
 	// 10.9.8.7...0!

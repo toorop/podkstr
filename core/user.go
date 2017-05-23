@@ -91,6 +91,16 @@ func UserGetByValidationUUID(uuid string) (u User, found bool, err error) {
 	return
 }
 
+// SetPasswd set user password
+func (u *User) SetPasswd(clearPasswd string) error {
+	passwd, err := bcrypt.GenerateFromPassword([]byte(clearPasswd), 10)
+	if err != nil {
+		return err
+	}
+	u.Passwd = string(passwd)
+	return u.Save()
+}
+
 // GetShows returns User shows
 func (u User) GetShows() (shows []Show, err error) {
 	err = DB.Model(&u).Related(&shows).Error
@@ -122,6 +132,12 @@ func (u User) GetShowByUUID(uuid string) (show Show, found bool, err error) {
 	}
 	found = true
 	return
+}
+
+// ResetValidationUUID generate a new validation UUID
+func (u *User) ResetValidationUUID() error {
+	u.ValidationUUID = uuid.NewV4().String()
+	return u.Save()
 }
 
 // Save saves user

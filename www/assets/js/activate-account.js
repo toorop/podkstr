@@ -9,7 +9,6 @@ var app = new Vue({
     methods: {
         resendActivationEmail: function() {
             var that = this
-            console.log("email " + this.email)
             if (this.email == "") {
                 eventHub.$emit('displayError', "email is required")
                 return
