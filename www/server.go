@@ -218,9 +218,8 @@ func main() {
 	// Get User Shows
 	e.GET("/aj/user/shows", controllers.AjGetUserShows)
 
-
 	// Discourse SSO
-	.GET("discourse/sso", controllers.DiscourseSSO)
+	e.GET("/discourse/sso", controllers.DiscourseSSO)
 
 	/////////////////
 	// 10.9.8.7...0!
