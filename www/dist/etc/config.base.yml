@@ -36,3 +36,7 @@ openstack:
   tenant:
     name: ""
     id: ""
+
+# Discourse
+discourse:
+  ssosecret: "thisissecret"        

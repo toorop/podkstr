@@ -10,6 +10,7 @@ import (
 	"encoding/hex"
 
 	"github.com/labstack/echo"
+	"github.com/spf13/viper"
 	"github.com/toorop/podkstr/core"
 	"github.com/toorop/podkstr/logger"
 )
@@ -18,7 +19,7 @@ import (
 // https://meta.discourse.org/t/official-single-sign-on-for-discourse/13045
 func DiscourseSSO(c echo.Context) error {
 	const URL = "https://board.podkstr.com/session/sso_login?"
-	const secret = "jeuoapnsbgettdjsssqhdk" // oh shit the secret is now public !!!!
+	var secret = viper.GetString("discourse.ssosecret")
 	var nonce string
 	// chek auth
 	u := c.Get("user")
