@@ -1,0 +1,1 @@
+$(document).ready(function(){var a=window.location.pathname;$('.nav > li > a[href="'+a+'"]').parent().addClass("active")});
