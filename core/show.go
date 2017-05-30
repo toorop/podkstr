@@ -9,7 +9,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/satori/go.uuid"
 	"github.com/spf13/viper"
-	"github.com/toorop/podkstr/logger"
 )
 
 // Show represents a Show. Amazing !!!!!!
@@ -114,12 +113,22 @@ func (s *Show) Delete() (err error) {
 	}
 	defer s.Unlock()
 
+	// Delete épisodes
+	episodes, err := s.GetEpisodes()
+	if err != nil {
+		return err
+	}
+	for _, episode := range episodes {
+		if err = episode.Delete(); err != nil {
+			return err
+		}
+	}
+
 	// delete showImage
 	image, found, err := s.GetImage()
 	if err != nil {
 		return
 	}
-
 	if found {
 		if err = image.Delete(); err != nil {
 			return err
@@ -140,18 +149,6 @@ func (s *Show) Delete() (err error) {
 		}
 	}
 
-	// Delete épisode
-	// get show episodes
-	episodes, err := s.GetEpisodes()
-	if err != nil {
-		return err
-	}
-
-	for _, episode := range episodes {
-		if err = episode.Delete(); err != nil {
-			return err
-		}
-	}
 	// Delete show
 	return DB.Unscoped().Delete(s).Error
 }
@@ -288,7 +285,6 @@ func (s *Show) AddEpisodeFromFeed(feedEpisode Item) (episode Episode, err error)
 // GetImage return show image
 func (s *Show) GetImage() (image ShowImage, found bool, err error) {
 	err = DB.Model(s).Related(&image).Error
-	logger.Log.Debug("SHOWGETIMAGE ", err)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = nil
@@ -317,7 +313,9 @@ func (i *ShowImage) Delete() error {
 	// delete from storage
 	if i.StorageKey != "" {
 		if err := Store.Del(i.StorageKey); err != nil {
-			return err
+			if !strings.HasPrefix(err.Error(), "404") {
+				return err
+			}
 		}
 	}
 	return DB.Unscoped().Delete(i).Error

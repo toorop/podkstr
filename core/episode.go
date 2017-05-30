@@ -14,7 +14,6 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/spf13/viper"
-	"github.com/toorop/podkstr/logger"
 )
 
 // Episode represents an Show.Episodes
@@ -66,7 +65,7 @@ func GetEpisodeByGUID(GUID string) (episode Episode, found bool, err error) {
 	return
 }
 
-// Create creat a nw episode in DB
+// Create creat a new episode in DB
 func (e *Episode) Create() error {
 	return DB.Create(e).Error
 }
@@ -78,7 +77,6 @@ func (e *Episode) Update() error {
 
 // Delete delete an episode
 func (e Episode) Delete() (err error) {
-
 	// Image
 	var image Image
 	image, found, err := e.GetImage()
@@ -195,21 +193,36 @@ func (e *Episode) Sync() error {
 	parts := strings.Split(enclosure.URLimport, "/")
 	fileName := parts[len(parts)-1]
 
-	// push to object storage
-	key := fmt.Sprintf("show/%s/episode/%s/%s", show.UUID, e.UUID, url.QueryEscape(fileName))
-	enclosure.StorageKey = key
-	logger.Log.Debug("starting transfert for ", key, Store)
-	fd, err = os.Open(filePath)
+	// push to object storage if not found
+	// get file hash
+	enclosure.Hash, err = GetSHA256File(filePath)
 	if err != nil {
-		return fmt.Errorf("unable to os.Open(%s) for episode %d - %s", filePath, e.ID, err)
+		return fmt.Errorf("unable to get SHA256 of %s - %s", filePath, err)
 	}
-	defer os.Remove(filePath)
-	if err = Store.Put(key, fd); err != nil {
-		return fmt.Errorf("unable to store.Put(%s) for episode %d - %s", key, e.ID, err)
+	enc, found, err := GetEnclosureByHash(enclosure.Hash)
+	if err != nil {
+		return fmt.Errorf("unable to GetEnclosureByHash(%s) - %s", filePath, err)
 	}
+	if found {
+		enclosure.URL = enc.URL
+		enclosure.StorageKey = enc.StorageKey
+	} else {
+		key := fmt.Sprintf("enclosures/%s/%s", enclosure.Hash, url.QueryEscape(fileName))
+		enclosure.StorageKey = key
+		fd, err = os.Open(filePath)
+		if err != nil {
+			return fmt.Errorf("unable to os.Open(%s) for episode %d - %s", filePath, e.ID, err)
+		}
+		defer os.Remove(filePath)
+		if err = Store.Put(key, fd); err != nil {
+			return fmt.Errorf("unable to store.Put(%s) for episode %d - %s", key, e.ID, err)
+		}
 
-	// update enclosure URL
-	enclosure.URL = viper.GetString("openstack.container.url") + "/" + key
+		// update enclosure URL
+		enclosure.URL = viper.GetString("openstack.container.url") + "/" + key
+
+	}
+	// update enclosure
 	if err = enclosure.Update(); err != nil {
 		return fmt.Errorf("unable to enclosure.Update() for episode %d - %s", e.ID, err)
 	}
@@ -286,10 +299,14 @@ func (e *Episode) FormattedItunesExplicit() string {
 	return e.ItunesExplicit
 }
 
-// Enclosure is a Episode.Enclosures
+/////////////////////////////////
+// Enclosure
+
+// Enclosure is a Episode.Enclosure
 type Enclosure struct {
 	gorm.Model
-	EpisodeID  uint `gorm:"index"`
+	EpisodeID  uint   `gorm:"index"`
+	Hash       string `gorm:"type:char(64);index"`
 	URLimport  string
 	URL        string
 	StorageKey string
@@ -297,12 +314,40 @@ type Enclosure struct {
 	Type       string
 }
 
+// GetEnclosureByHash return the first enclosure with this hash
+func GetEnclosureByHash(hash string) (e Enclosure, found bool, err error) {
+	err = DB.Where("hash = ?", hash).First(&e).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = nil
+		}
+		return
+	}
+	found = true
+	return
+}
+
+// GetEnclosuresByHash returns enclosures by hash
+func GetEnclosuresByHash(hash string) (enclosures []Enclosure, err error) {
+	err = DB.Where("hash = ?", hash).Find(&enclosures).Error
+	return enclosures, err
+}
+
 // Delete delete enclosure e
 func (e *Enclosure) Delete() error {
-	// delete from storage
+	// delete from storage if there is nos other occurence
 	if e.StorageKey != "" {
-		if err := Store.Del(e.StorageKey); err != nil {
+		removeFromStore := false
+		// bypass if hash ==""
+		enclosures, err := GetEnclosuresByHash(e.Hash)
+		if err != nil {
 			return err
+		}
+		removeFromStore = len(enclosures) == 1
+		if removeFromStore {
+			if err := Store.Del(e.StorageKey); err != nil {
+				return err
+			}
 		}
 	}
 	return DB.Unscoped().Delete(e).Error
@@ -312,6 +357,9 @@ func (e *Enclosure) Delete() error {
 func (e *Enclosure) Update() error {
 	return DB.Save(e).Error
 }
+
+//////////////////////////////////
+// Image
 
 // Image represents an Episode.Image
 type Image struct {
@@ -330,7 +378,9 @@ func (i *Image) Delete() error {
 	// delete from storage
 	if i.StorageKey != "" {
 		if err := Store.Del(i.StorageKey); err != nil {
-			return err
+			if !strings.HasPrefix(err.Error(), "404") {
+				return err
+			}
 		}
 	}
 	return DB.Unscoped().Delete(i).Error

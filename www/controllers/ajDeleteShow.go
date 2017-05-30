@@ -29,7 +29,7 @@ func AjDeleteShow(ec echo.Context) error {
 	// get User show
 	show, found, err := u.(core.User).GetShowByUUID(c.Param("uuid"))
 	if err != nil {
-		logger.Log.Error(c.Request().RemoteAddr, " - AjDeleteShow -  ", err)
+		logger.Log.Errorf("%s - AjDeleteShow - unable to GetShowByUUID(%s) - %s", c.Request().RemoteAddr, c.Param("uuid"), err)
 		return c.JSON(http.StatusInternalServerError, resp)
 	}
 	if !found {
@@ -45,7 +45,7 @@ func AjDeleteShow(ec echo.Context) error {
 
 	// delete
 	if err = show.Delete(); err != nil {
-		logger.Log.Error(c.Request().RemoteAddr, " - ", u.(core.User).Email, " - AjDeleteShow: show.Delete - ", err)
+		logger.Log.Errorf("%s - AjDeleteShow - unable to show.Delete() - %s", c.Request().RemoteAddr, err)
 		return c.JSON(http.StatusInternalServerError, resp)
 	}
 	logger.Log.Info(c.Request().RemoteAddr, " - ", u.(core.User).Email, " - has deleted show ", show.Title)

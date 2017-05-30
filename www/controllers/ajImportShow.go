@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -133,8 +132,6 @@ func AjImportShow(ec echo.Context) error {
 			}
 		}
 	}()
-
-	fmt.Println("Au final on a: ", err)
 
 	resp.Ok = true
 	return c.JSON(http.StatusOK, resp)

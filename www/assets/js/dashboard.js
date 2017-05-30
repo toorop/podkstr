@@ -76,7 +76,7 @@ var app = new Vue({
 
         // populate show
         this.updateShowsDisplay()
-        setInterval(this.updateShowsDisplay, 300000)
+        setInterval(this.updateShowsDisplay, 60000)
     },
     methods: {
         importShow: function() {
