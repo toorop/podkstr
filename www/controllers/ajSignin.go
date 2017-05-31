@@ -129,7 +129,7 @@ func AjSignin(ec echo.Context) error {
 	}
 
 	// Get a session
-	session, err = c.GetCookieStore().Get(c.Request(), "podkastr")
+	session, err = c.GetCookieStore().Get(c.Request(), "podkstr")
 	if err != nil {
 		logger.Log.Error(c.Request().RemoteAddr, " - Signup - c.GetCookieStore().Get() - ", err)
 		return c.NoContent(http.StatusInternalServerError)

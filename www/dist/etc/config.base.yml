@@ -22,7 +22,7 @@ smtp:
   port: 587
   user: ""
   passwd: ""
-  sender: "support@podkastr.com"
+  sender: "support@podkstr.com"
   
 # Openstack Swift Provider
 openstack:

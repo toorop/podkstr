@@ -15,7 +15,7 @@ func AjSessionTest(ec echo.Context) error {
 	log.Info(viper.Get("apppath"))
 
 	// Get a session
-	session, err := c.GetCookieStore().Get(c.Request(), "podkastr")
+	session, err := c.GetCookieStore().Get(c.Request(), "podkstr")
 	if err != nil {
 		log.Error(err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{"ok": "false"})
