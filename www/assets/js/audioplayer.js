@@ -28,7 +28,7 @@ Vue.component('player', {
                         </div>\
                         <div class="row">\
                             <div id="ap-timeline" class="col-md-10 col-sm-10 col-xs-8">\
-                                <input type="range">\
+                                <input type="range" :value="position" v-on:input="seek($event.target.value)" :max="duration" step="1">\
                             </div>\
                             <div id="ap-time" class="col-md-2 col-sm-2 col-xs-4">\
                                 <p> [[ position | formatTime ]]/[[ duration | formatTime ]] </p>\
@@ -63,8 +63,7 @@ Vue.component('player', {
     },
     methods: {
         playpause: function() {
-            console.log("playpause", this.sound.duration(), this.sound.seek())
-                // toggle button            
+            // toggle button
             if (this.isPlaying) {
                 this.sound.pause()
             } else {
@@ -92,8 +91,10 @@ Vue.component('player', {
                 // update duration && position
                 clearInterval(that.displayInterval)
             })
-
-
+        },
+        seek: function(position) {
+            this.position = position
+            this.sound.seek(position)
         }
     }
 })
