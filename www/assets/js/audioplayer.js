@@ -79,11 +79,10 @@ Vue.component('player', {
             })
 
             this.sound.on('play', function() {
-                var sound = this
-                that.duration = sound.duration()
+                that.duration = this.duration()
                     // update duration && position
                 that.displayInterval = setInterval(function() {
-                    that.position = sound.seek()
+                    that.position = this.seek()
                 }, 1000)
 
             })
