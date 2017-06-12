@@ -1,0 +1,113 @@
+.show-box img,
+.show-box-ico {
+    cursor: pointer
+}
+
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0
+}
+
+body {
+    min-height: 100%;
+    margin: 0;
+    padding: 5rem 0 0;
+    position: relative;
+    display: table;
+    width: 100%
+}
+
+.maincont {
+    margin-bottom: 10px
+}
+
+.main {
+    padding: 3rem 1.5rem
+}
+
+footer {
+    display: table-row;
+    background-color: #212322;
+    /* height: 110px; -> problem width footer height */
+    max-width: 100%;
+    padding: 20px 20px 0 20px;
+    /* up, right, bottom, left and better than <br> sir ;-) */
+}
+
+#tail {
+    /* modifs tom -> position: absolute; get an absolut if you want to drink but not here for your css ;-) */
+    text-align: center;
+    padding-top: 20px;
+    /* better than <br> sir ;-) */
+    padding-bottom: 20px;
+    /* better than <br> sir ;-) */
+    /* bottom: 0 -> modifs tom : no-need here */
+}
+
+
+/* Modal wait */
+
+.modal-mask {
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .5);
+    transition: opacity .3s ease;
+}
+
+.modal-wait-body {
+    position: absolute;
+    top: 33%;
+    left: 50%;
+    margin-left: -85px;
+    margin-top: -85px;
+    text-align: center;
+    color: #ccc;
+}
+
+
+/* Show box */
+
+.show-box .caption {
+    padding-top: 0
+}
+
+.show-box .caption ul {
+    margin-bottom: 0
+}
+
+.show-box-icons {
+    font-size: 30px;
+    text-align: center
+}
+
+
+/* Audio player */
+
+.aplayer {
+    /*border: 1px solid lightgrey;*/
+    margin-bottom: 15px;
+}
+
+#play-pause {
+    text-align: center;
+    font-size: 40px;
+}
+
+#ap-title {
+    height: 30px;
+    padding-top: 10px;
+}
+
+#ap-timeline {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+#ap-time {
+    text-align: center;
+}
