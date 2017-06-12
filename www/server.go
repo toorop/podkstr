@@ -225,6 +225,10 @@ func main() {
 	e.GET("/discourse/sso", controllers.DiscourseSSO)
 
 	/////////////////
+	// API
+	e.GET("/api/v1/audio/:uuid", controllers.APIGetAudio)
+
+	/////////////////
 	// 10.9.8.7...0!
 	logger.Log.Info("launch http")
 	e.Logger.Fatal(e.Start(":1323"))

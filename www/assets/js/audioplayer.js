@@ -1,3 +1,20 @@
+Vue.filter('formatTime', function(value) {
+    if (value) {
+        var minutes = Math.floor(value / 60)
+        var seconds = Math.floor(value - minutes * 60)
+        if (seconds < 10) {
+            seconds = '0' + seconds
+        }
+        if (minutes < 10) {
+            minutes = '0' + minutes
+        }
+        return minutes + ':' + seconds
+    } else {
+        return '00:00'
+    }
+})
+
+
 Vue.component('player', {
     delimiters: ["[[", "]]"],
     template: '<!-- player -->\
@@ -14,7 +31,7 @@ Vue.component('player', {
                                 <input type="range">\
                             </div>\
                             <div id="ap-time" class="col-md-2 col-sm-2 col-xs-4">\
-                                <p> 0:25/10:52 </p>\
+                                <p> [[ position | formatTime ]]/[[ duration | formatTime ]] </p>\
                             </div>\
                         </div>\
                     </div>\
@@ -29,27 +46,53 @@ Vue.component('player', {
             isPlaying: false,
             title: '',
             src: [],
-            sound: {}
+            sound: {},
+            duration: 0,
+            position: 0,
+            displayInterval: {}
         }
     },
     created: function() {
         this.title = this.initialTitle
         this.src = [this.initialSrc]
         this.sound = new Howl({
-                src: this.src
-            })
-            //sound.play()
+            src: this.src,
+            preload: true,
+        })
+        this.initSound()
     },
     methods: {
         playpause: function() {
-            console.log("playpause", this.title, this.src)
-                // toggle button
-            this.isPlaying = !this.isPlaying
+            console.log("playpause", this.sound.duration(), this.sound.seek())
+                // toggle button            
             if (this.isPlaying) {
                 this.sound.pause()
             } else {
                 this.sound.play()
             }
+            this.isPlaying = !this.isPlaying
+        },
+        initSound: function() {
+            that = this
+            this.sound = new Howl({
+                src: this.src,
+                preload: true,
+            })
+
+            this.sound.on('play', function() {
+                var sound = this
+                that.duration = sound.duration()
+                    // update duration && position
+                that.displayInterval = setInterval(function() {
+                    that.position = sound.seek()
+                }, 1000)
+
+            })
+            this.sound.on('stop', function() {
+                // update duration && position
+                clearInterval(that.displayInterval)
+            })
+
 
         }
     }
