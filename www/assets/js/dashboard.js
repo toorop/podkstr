@@ -7,12 +7,10 @@ var compShowThumbail = {
     props: ['show'],
     template: '<div class="col-sm-6 col-md-3">' +
         '<div class="thumbnail show-box">' +
-        '<img :src="show.ItunesImage" :alt="show.Title" @click="workinprogress">' +
+        '<a :href="\'/show/\' + show.UUID">' +
+        '<img :src="show.ItunesImage" :alt="show.Title">' +
+        '</a>' +
         '<div class="caption">' +
-        //'<div class="text-center">' +
-        //'<h3>[[ show.Title | maxlenght ]]</h3>' +
-        //'</div>' +
-        //'<div class="show-box-icons">' +
         '<br>' +
         '<ul class="list-inline show-box-icons">' +
         '<li v-if="show.Task==\'firstsync\'"><span  class="glyphicon glyphicon glyphicon-alert col-md-4 show-box-ico" style="color: #a94442;"  title="Status: not synchronized yet" @click="workinprogress"></span></li>' +
