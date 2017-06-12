@@ -63,12 +63,12 @@ Vue.component('player', {
     },
     methods: {
         playpause: function() {
-            // toggle button
             if (this.isPlaying) {
                 this.sound.pause()
             } else {
                 this.sound.play()
             }
+            // toggle 
             this.isPlaying = !this.isPlaying
         },
         initSound: function() {
