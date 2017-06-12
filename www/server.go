@@ -190,6 +190,9 @@ func main() {
 	// Feed
 	e.GET("/feed/:uuid", controllers.GetShowFeed)
 
+	// Show
+	e.GET("/show/:uuid", controllers.Show)
+
 	// private
 
 	// dashboard
