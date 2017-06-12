@@ -84,3 +84,37 @@ footer {
     font-size: 30px;
     text-align: center
 }
+
+
+/* Audio player */
+
+.aplayer {
+    /*border: 1px solid lightgrey;*/
+    margin-bottom: 15px;
+}
+
+#btn-play-pause {
+    text-align: center;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+    #play-pause {
+        font-size: 30px;
+    }
+}
+
+#ap-title {
+    height: 30px;
+    padding-top: 10px;
+}
+
+#ap-timeline {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+#ap-time {
+    text-align: center;
+}

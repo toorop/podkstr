@@ -96,6 +96,13 @@ footer {
 #play-pause {
     text-align: center;
     font-size: 40px;
+    cursor: pointer;
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+    #play-pause {
+        font-size: 30px;
+    }
 }
 
 #ap-title {

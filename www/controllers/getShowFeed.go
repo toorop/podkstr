@@ -23,7 +23,6 @@ func GetShowFeed(c echo.Context) error {
 		BaseURL string
 		Show    *core.Show
 	}
-
 	var err error
 	var data = tpl{
 		BaseURL: viper.GetString("baseurl"),
