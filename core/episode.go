@@ -307,8 +307,8 @@ type Enclosure struct {
 	gorm.Model
 	EpisodeID  uint   `gorm:"index"`
 	Hash       string `gorm:"type:char(64);index"`
-	URLimport  string
-	URL        string
+	URLimport  string `gorm:"type:varchar(1024)"`
+	URL        string `gorm:"type:varchar(1024)"`
 	StorageKey string
 	Length     int64
 	Type       string
